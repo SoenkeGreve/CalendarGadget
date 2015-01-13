@@ -1,0 +1,4067 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+    <ModulePrefs title="REWE Digital Year View"
+                 author="Soenke Greve"
+                 author_email="soenke.greve@rewe-digital.com">
+        <Require feature="views"/>
+        <Require feature="google.calendar-0.5"/>
+        <Require feature="google.calendar-0.5.read"/>
+        <Require feature="dynamic-height"/>
+    </ModulePrefs>
+    <Content type="html" view="default">
+        <![CDATA[
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<body>
+		<style>
+			body {
+				background-color: #fff;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				font-family:Arial;
+				font-size: 12.8px;
+			}
+		</style>
+
+		<script type="text/javascript">
+			function goToCanvas() {
+				var year = document.getElementById('year').value;
+				gadgets.views.requestNavigateTo('canvas', {'year': year});
+				return false;
+			};
+
+</script>
+<form style="display:block; text-align:center; margin:0; padding:0" onsubmit="return goToCanvas();">
+	<input maxlength="4" id="year" value="2013" style="width: 4em; margin:2px 0">
+	<input type=submit value="Go">
+</form>
+
+<script type="text/javascript">
+	document.getElementById('year').value = (new Date()).getFullYear();
+	gadgets.window.adjustHeight();
+	</script>
+
+</body>
+</html>
+]]>
+    </Content>
+    <!--<Content type="url" view="canvas" href="http://sgreve.host-ed.me/index.html"></Content>-->
+    <Content type="html" view="canvas">
+        <![CDATA[<!DOCTYPE html>
+<html>
+
+<body>
+
+<!-- CSS -->
+<link rel="stylesheet" media="screen" type="text/css"
+      href="https://code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css">
+<style type="text/css">
+    /**
+ * @preserve Copyright 2011 Syd Lawrence ( www.sydlawrence.com ).
+ * Version: 0.1
+ *
+ * Licensed under MIT and GPLv2.
+ *
+ * For use with jquery.shadow plugin
+ *
+ * Adapted from Nicholas Gallagher's CSS drop shadows without images demo
+ * http://nicolasgallagher.com/css-drop-shadows-without-images/demo/
+ *
+ */
+
+    /* Shared styles */
+
+    .jquery-shadow {
+        position:relative;
+        -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
+        -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+        box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    .jquery-shadow:before,
+    .jquery-shadow:after {
+        content:"";
+        position:absolute;
+        z-index:-2;
+    }
+
+
+
+    /* Lifted corners */
+
+    .jquery-shadow-lifted:before,
+    .jquery-shadow-lifted:after {
+        bottom:15px;
+        left:10px;
+        width:50%;
+        height:20%;
+        max-width:300px;
+        -webkit-box-shadow:0 15px 10px rgba(0, 0, 0, 0.7);
+        -moz-box-shadow:0 15px 10px rgba(0, 0, 0, 0.7);
+        box-shadow:0 15px 10px rgba(0, 0, 0, 0.7);
+        -webkit-transform:rotate(-3deg);
+        -moz-transform:rotate(-3deg);
+        -ms-transform:rotate(-3deg);
+        -o-transform:rotate(-3deg);
+        transform:rotate(-3deg);
+    }
+
+    .jquery-shadow-lifted:after {
+        right:10px;
+        left:auto;
+        -webkit-transform:rotate(3deg);
+        -moz-transform:rotate(3deg);
+        -ms-transform:rotate(3deg);
+        -o-transform:rotate(3deg);
+        transform:rotate(3deg);
+    }
+
+    /* Perspective */
+
+    .jquery-shadow-perspective:before {
+        left:80px;
+        bottom:5px;
+        width:50%;
+        height:35%;
+        max-width:200px;
+        -webkit-box-shadow:-80px 0 8px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow:-80px 0 8px rgba(0, 0, 0, 0.4);
+        box-shadow:-80px 0 8px rgba(0, 0, 0, 0.4);
+        -webkit-transform:skew(50deg);
+        -moz-transform:skew(50deg);
+        -ms-transform:skew(50deg);
+        -o-transform:skew(50deg);
+        transform:skew(50deg);
+        -webkit-transform-origin:0 100%;
+        -moz-transform-origin:0 100%;
+        -ms-transform-origin:0 100%;
+        -o-transform-origin:0 100%;
+        transform-origin:0 100%;
+    }
+
+    .jquery-shadow-perspective:after {
+        display:none;
+    }
+
+
+    /* Side shadows */
+
+    .jquery-shadow-sides:before {
+        top:10px;
+        bottom:10px;
+        left:0;
+        right:50%;
+        -webkit-box-shadow:0 0 15px rgba(0,0,0,0.6);
+        -moz-box-shadow:0 0 15px rgba(0,0,0,0.6);
+        box-shadow:0 0 15px rgba(0,0,0,0.6);
+        -moz-border-radius:10px / 100px;
+        border-radius:10px / 100px;
+    }
+
+    .jquery-shadow-sides-vt-2:before {
+        right:0;
+    }
+
+    .jquery-shadow-sides-hz-1:before {
+        top:50%;
+        bottom:0;
+        left:10px;
+        right:10px;
+        -moz-border-radius:100px / 10px;
+        border-radius:100px / 10px;
+    }
+
+    .jquery-shadow-sides-hz-2:before {
+        top:0;
+        bottom:0;
+        left:10px;
+        right:10px;
+        -moz-border-radius:100px / 10px;
+        border-radius:100px / 10px;
+    }
+
+    /* Raised shadow - no pseudo-elements needed */
+
+    .jquery-shadow-raised {
+        -webkit-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+        -moz-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+        box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    /* Rotated box */
+
+    .jquery-shadow-rotated :first-child:before {
+        content:"";
+        position:absolute;
+        z-index:-1;
+        top:0;
+        bottom:0;
+        left:0;
+        right:0;
+        background:#fff;
+        -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
+        -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+        box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    }
+
+</style>
+<style type="text/css">
+
+    /*!
+ * jQuery contextMenu - Plugin for simple contextMenu handling
+ *
+ * Version: git-master
+ *
+ * Authors: Rodney Rehm, Addy Osmani (patches for FF)
+ * Web: http://medialize.github.com/jQuery-contextMenu/
+ *
+ * Licensed under
+ *   MIT License http://www.opensource.org/licenses/mit-license
+ *   GPL v3 http://opensource.org/licenses/GPL-3.0
+ *
+ */
+
+    .context-menu-list {
+        margin:0;
+        padding:0;
+
+        min-width: 120px;
+        max-width: 250px;
+        display: inline-block;
+        position: absolute;
+        list-style-type: none;
+
+        border: 1px solid #DDD;
+        background: #EEE;
+
+        -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        -ms-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        -o-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 11px;
+    }
+
+    .context-menu-item {
+        padding: 2px 2px 2px 24px;
+        background-color: #EEE;
+        position: relative;
+        -webkit-user-select: none;
+        -moz-user-select: -moz-none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .context-menu-separator {
+        padding-bottom:0;
+        border-bottom: 1px solid #DDD;
+    }
+
+    .context-menu-item > label > input,
+    .context-menu-item > label > textarea {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }
+
+    .context-menu-item.hover {
+        cursor: pointer;
+        background-color: #39F;
+    }
+
+    .context-menu-item.disabled {
+        color: #666;
+    }
+
+    .context-menu-input.hover,
+    .context-menu-item.disabled.hover {
+        cursor: default;
+        background-color: #EEE;
+    }
+
+    .context-menu-submenu:after {
+        content: ">";
+        color: #666;
+        position: absolute;
+        top: 0;
+        right: 3px;
+        z-index: 1;
+    }
+
+    /* icons
+        #protip:
+        In case you want to use sprites for icons (which I would suggest you do) have a look at
+        http://css-tricks.com/13224-pseudo-spriting/ to get an idea of how to implement
+        .context-menu-item.icon:before {}
+     */
+    .context-menu-item.icon { min-height: 18px; background-repeat: no-repeat; background-position: 4px 2px; }
+    .context-menu-item.icon-edit { background-image: url(../gfx/page_white_edit.png); }
+    .context-menu-item.icon-cut { background-image: url(../gfx/cut.png); }
+    .context-menu-item.icon-copy { background-image: url(../gfx/page_white_copy.png); }
+    .context-menu-item.icon-paste { background-image: url(../gfx/page_white_paste.png); }
+    .context-menu-item.icon-delete { background-image: url(../gfx/page_white_delete.png); }
+    .context-menu-item.icon-add { background-image: url(../gfx/page_white_add.png); }
+    .context-menu-item.icon-quit { background-image: url(../gfx/door.png); }
+
+    /* vertically align inside labels */
+    .context-menu-input > label > * { vertical-align: top; }
+
+    /* position checkboxes and radios as icons */
+    .context-menu-input > label > input[type="checkbox"],
+    .context-menu-input > label > input[type="radio"] {
+        margin-left: -17px;
+    }
+    .context-menu-input > label > span {
+        margin-left: 5px;
+    }
+
+    .context-menu-input > label,
+    .context-menu-input > label > input[type="text"],
+    .context-menu-input > label > textarea,
+    .context-menu-input > label > select {
+        display: block;
+        width: 100%;
+
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        -o-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    .context-menu-input > label > textarea {
+        height: 100px;
+    }
+    .context-menu-item > .context-menu-list {
+        display: none;
+        /* re-positioned by js */
+        right: -5px;
+        top: 5px;
+    }
+
+    .context-menu-item.hover > .context-menu-list {
+        display: block;
+    }
+
+    .context-menu-accesskey {
+        text-decoration: underline;
+    }
+
+</style>
+<style type="text/css">
+
+    .colorpicker {
+        width: 356px;
+        height: 176px;
+        overflow: hidden;
+        position: absolute;
+        background: url(../gfx/colorpicker_background.png);
+        font-family: Arial, Helvetica, sans-serif;
+        display: none;
+        z-index: 1120;
+    }
+    .colorpicker_color {
+        width: 150px;
+        height: 150px;
+        left: 14px;
+        top: 13px;
+        position: absolute;
+        background: #f00;
+        overflow: hidden;
+        cursor: crosshair;
+    }
+    .colorpicker_color div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150px;
+        height: 150px;
+        background: url(../gfx/colorpicker_overlay.png);
+    }
+    .colorpicker_color div div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 11px;
+        height: 11px;
+        overflow: hidden;
+        background: url(../gfx/colorpicker_select.gif);
+        margin: -5px 0 0 -5px;
+    }
+    .colorpicker_hue {
+        position: absolute;
+        top: 13px;
+        left: 171px;
+        width: 35px;
+        height: 150px;
+        cursor: n-resize;
+    }
+    .colorpicker_hue div {
+        position: absolute;
+        width: 35px;
+        height: 9px;
+        overflow: hidden;
+        background: url(../gfx/colorpicker_indic.gif) left top;
+        margin: -4px 0 0 0;
+        left: 0px;
+    }
+    .colorpicker_new_color {
+        position: absolute;
+        width: 60px;
+        height: 30px;
+        left: 213px;
+        top: 13px;
+        background: #f00;
+    }
+    .colorpicker_current_color {
+        position: absolute;
+        width: 60px;
+        height: 30px;
+        left: 283px;
+        top: 13px;
+        background: #f00;
+    }
+    .colorpicker input {
+        background-color: transparent;
+        border: 1px solid transparent;
+        position: absolute;
+        font-size: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #898989;
+        top: 4px;
+        right: 11px;
+        text-align: right;
+        margin: 0;
+        padding: 0;
+        height: 11px;
+    }
+    .colorpicker_hex {
+        position: absolute;
+        width: 72px;
+        height: 22px;
+        background: url(../gfx/colorpicker_hex.png) top;
+        left: 212px;
+        top: 142px;
+    }
+    .colorpicker_hex input {
+        right: 6px;
+    }
+    .colorpicker_field {
+        height: 22px;
+        width: 62px;
+        background-position: top;
+        position: absolute;
+    }
+    .colorpicker_field span {
+        position: absolute;
+        width: 12px;
+        height: 22px;
+        overflow: hidden;
+        top: 0;
+        right: 0;
+        cursor: n-resize;
+    }
+    .colorpicker_rgb_r {
+        background-image: url(../gfx/colorpicker_rgb_r.png);
+        top: 52px;
+        left: 212px;
+    }
+    .colorpicker_rgb_g {
+        background-image: url(../gfx/colorpicker_rgb_g.png);
+        top: 82px;
+        left: 212px;
+    }
+    .colorpicker_rgb_b {
+        background-image: url(../gfx/colorpicker_rgb_b.png);
+        top: 112px;
+        left: 212px;
+    }
+    .colorpicker_hsb_h {
+        background-image: url(../gfx/colorpicker_hsb_h.png);
+        top: 52px;
+        left: 282px;
+    }
+    .colorpicker_hsb_s {
+        background-image: url(../gfx/colorpicker_hsb_s.png);
+        top: 82px;
+        left: 282px;
+    }
+    .colorpicker_hsb_b {
+        background-image: url(../gfx/colorpicker_hsb_b.png);
+        top: 112px;
+        left: 282px;
+    }
+    .colorpicker_submit {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        background: url(../gfx/colorpicker_submit.png) top;
+        left: 322px;
+        top: 142px;
+        overflow: hidden;
+    }
+    .colorpicker_focus {
+        background-position: center;
+    }
+    .colorpicker_hex.colorpicker_focus {
+        background-position: bottom;
+    }
+    .colorpicker_submit.colorpicker_focus {
+        background-position: bottom;
+    }
+    .colorpicker_slider {
+        background-position: bottom;
+    }
+</style>
+<style type="text/css">
+    html * {
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    * {
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+    }
+
+    body {
+        font-family: verdana, "Trebuchet MS", arial, helvetica, sans-serif;
+        font-size: 8pt;
+        background: #f3f3f1;
+        /*overflow:scroll;*/
+    }
+
+    table {
+        border-spacing: inherit;
+        border-collapse: separate;
+    }
+
+    #scrollWrapper{
+        /*overflow: scroll;*/
+        /*background-color:red;*/
+    }
+
+    .toolGroup {
+        padding-right: 10pt;
+    }
+
+    #topBox {
+        position: fixed;
+        top: 0;
+        color: white;
+    }
+
+    /*#yearSelector {*/
+    /*padding: 0 5pt;*/
+    /*font-size: 11pt;*/
+    /*}*/
+
+    #monthHeader {
+        margin-top: 2pt;
+        display: block;
+    }
+
+    .calendarFrame {
+        width: 100%;
+    }
+
+    #toolBox {
+        margin: 0 auto;
+        padding: 5pt 15pt;
+        height: 18pt;
+    }
+
+    #yearTable {
+        margin: 0;
+        margin-top: 58pt;
+    }
+
+    .spacer {
+        width: 3pt;
+    }
+
+    .month {
+        font-size: 10pt;
+        padding: 3pt;
+        margin: 0 1px 5pt 0;
+        /*margin-bottom: 5pt;*/
+        width: 8.3% !important;
+    }
+
+    #yearTable th {
+        padding: 2pt 10pt 2pt 10pt;
+        border: solid 3px #999999;
+        border-radius: 5pt;
+    }
+
+    #yearTable td {
+    }
+
+    .day {
+        color: #5c9ccc;
+        vertical-align: top;
+        padding: 2pt 4pt 2pt 2pt;
+        border: solid 1px #c5dbec;
+        width: 8.3% !important;
+    }
+
+    .saturday {
+        color: white;
+        background-color: #c5dbec;
+        border: solid 1px transparent;
+    }
+
+    .sunday {
+        color: white;
+        background-color: #5c9ccc;
+        border: solid 1px transparent;
+    }
+
+    .invalid {
+        border: 0;
+        background-color: transparent !important;
+    }
+
+    .dayInfo {
+        text-align: center;
+        display: block;
+        width: 10pt;
+        height: 100%;
+        margin: 0 0 2pt 0;
+    }
+
+    .eventWrapper {
+        display: block;
+        margin: 2pt 0;
+        vertical-align: top;
+        padding: 0;
+        margin: 0;
+        min-width: 20pt;
+        min-height: 20pt;
+        border-radius: 5pt;
+        list-style-type: none;
+    }
+
+    .event {
+        text-wrap: none;
+        border-radius: 5pt;
+        border: solid 3pt transparent;
+        padding: 3pt;
+        cursor: pointer;
+        margin-bottom: 2pt;
+    }
+
+    .event {
+        background-color: gray;
+        color: white;
+    }
+
+    .event:hover {
+        opacity: .5;
+    }
+
+    .ui-selected {
+        border: solid 3pt indianred;
+    }
+
+    .ui-selected:hover {
+        border: solid 3pt indianred;
+        opacity: .5;
+    }
+
+    .saturday .event:hover, .sunday .event:hover {
+        opacity: .5;
+    }
+
+    .editCategory{
+        height: 36px;
+    }
+
+    .editCategory input {
+        width: 250px;
+        height: 36px;
+        margin: 0 5px 10px 0;
+        padding: 0;
+        vertical-align: top;
+        padding: 0;// 0 10px;
+    }
+
+    .editCategory div{
+        display: inline-block;
+    }
+
+    .editCategory div > div {
+        width: 28px;
+        height: 28px;
+        margin: 5px;
+        padding: 0;
+        display: inline-block;
+        background: url(../gfx/select2.png);
+        background-position-x: -4px;
+        background-position-y: -4px;
+    }
+
+    .editCategory .btnRemove
+    {
+        margin: 2px 2px 2px 10px;
+        width:32px;
+        height:32px;
+        vertical-align:top;
+    }
+
+</style>
+
+<!-- JavaScript libs -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/locales.min.js"></script>
+
+<script type="text/javascript">
+    /**
+     * @preserve Copyright 2011 Syd Lawrence ( www.sydlawrence.com ).
+     * Version: 0.1
+     *
+     * Licensed under MIT and GPLv2.
+     *
+     * Adapted from Nicholas Gallagher's CSS drop shadows without images demo
+     * http://nicolasgallagher.com/css-drop-shadows-without-images/demo/
+     *
+     * Usage: $('.box').shadow(options);
+     *
+     */
+
+    (function( $ ){
+
+
+        $.fn.shadow = function(options) {
+
+            // options could just be the type
+            if (typeof options !== "object")
+                options = {type:options};
+
+            // set up the options using the defaults
+            options = $.extend({}, $.fn.shadow.defaults, options);
+
+            var els = this;
+
+            // add the necessary css classes
+            els.addClass('jquery-shadow');
+            els.addClass('jquery-shadow-'+options.type);
+
+            // some require extras js
+            switch(options.type) {
+                case 'sides' :
+                    $.fn.shadow.sides(this,options);
+                    break;
+                case 'rotated' :
+                    $.fn.shadow.rotated(this,options);
+                    break;
+            }
+
+            // for good measure :)
+            $.fn.shadow.borderRadius(this,options.radius);
+
+            return this;
+        };
+
+        // rotate these bad boys
+        $.fn.shadow.rotated = function(els,options) {
+
+            // one property to rule them all, if only!
+            els.css('-webkit-transform','rotate('+options.rotate+')')
+                    .css('-moz-transform','rotate('+options.rotate+')')
+                    .css('-ms-transform','rotate('+options.rotate+')')
+                    .css('-o-transform','rotate('+options.rotate+')')
+                    .css('transform','rotate('+options.rotate+')');
+        }
+
+        // sides have funky stuff
+        $.fn.shadow.sides = function(els,options) {
+            els.addClass('jquery-shadow-sides-'+options.sides);
+        }
+
+        // border-radius goodness..
+        $.fn.shadow.borderRadius = function(els,radius) {
+            els.css('-moz-border-radius',radius)
+                    .css('border-radius',radius);
+        }
+
+        // these are the defaults :)
+        $.fn.shadow.defaults = {
+            type:'standard', // AVAILABLE standard, lifted, perspective, raised, sides
+            radius:4,
+            sides:'', // used when type = "sides", AVAILABLE vt-1, vt-2, hz-1, hz-2
+            rotate:'-3deg'
+        };
+
+    })( jQuery );
+
+
+</script>
+
+<script type="text/javascript">/*!
+ * jQuery UI Position v1.10.0
+ * http://jqueryui.com
+ *
+ * Copyright 2013 jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/position/
+ */
+(function( $, undefined ) {
+
+    $.ui = $.ui || {};
+
+    var cachedScrollbarWidth,
+            max = Math.max,
+            abs = Math.abs,
+            round = Math.round,
+            rhorizontal = /left|center|right/,
+            rvertical = /top|center|bottom/,
+            roffset = /[\+\-]\d+%?/,
+            rposition = /^\w+/,
+            rpercent = /%$/,
+            _position = $.fn.position;
+
+    function getOffsets( offsets, width, height ) {
+        return [
+            parseInt( offsets[ 0 ], 10 ) * ( rpercent.test( offsets[ 0 ] ) ? width / 100 : 1 ),
+            parseInt( offsets[ 1 ], 10 ) * ( rpercent.test( offsets[ 1 ] ) ? height / 100 : 1 )
+        ];
+    }
+
+    function parseCss( element, property ) {
+        return parseInt( $.css( element, property ), 10 ) || 0;
+    }
+
+    function getDimensions( elem ) {
+        var raw = elem[0];
+        if ( raw.nodeType === 9 ) {
+            return {
+                width: elem.width(),
+                height: elem.height(),
+                offset: { top: 0, left: 0 }
+            };
+        }
+        if ( $.isWindow( raw ) ) {
+            return {
+                width: elem.width(),
+                height: elem.height(),
+                offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+            };
+        }
+        if ( raw.preventDefault ) {
+            return {
+                width: 0,
+                height: 0,
+                offset: { top: raw.pageY, left: raw.pageX }
+            };
+        }
+        return {
+            width: elem.outerWidth(),
+            height: elem.outerHeight(),
+            offset: elem.offset()
+        };
+    }
+
+    $.position = {
+        scrollbarWidth: function() {
+            if ( cachedScrollbarWidth !== undefined ) {
+                return cachedScrollbarWidth;
+            }
+            var w1, w2,
+                    div = $( "<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+                    innerDiv = div.children()[0];
+
+            $( "body" ).append( div );
+            w1 = innerDiv.offsetWidth;
+            div.css( "overflow", "scroll" );
+
+            w2 = innerDiv.offsetWidth;
+
+            if ( w1 === w2 ) {
+                w2 = div[0].clientWidth;
+            }
+
+            div.remove();
+
+            return (cachedScrollbarWidth = w1 - w2);
+        },
+        getScrollInfo: function( within ) {
+            var overflowX = within.isWindow ? "" : within.element.css( "overflow-x" ),
+                    overflowY = within.isWindow ? "" : within.element.css( "overflow-y" ),
+                    hasOverflowX = overflowX === "scroll" ||
+                            ( overflowX === "auto" && within.width < within.element[0].scrollWidth ),
+                    hasOverflowY = overflowY === "scroll" ||
+                            ( overflowY === "auto" && within.height < within.element[0].scrollHeight );
+            return {
+                width: hasOverflowX ? $.position.scrollbarWidth() : 0,
+                height: hasOverflowY ? $.position.scrollbarWidth() : 0
+            };
+        },
+        getWithinInfo: function( element ) {
+            var withinElement = $( element || window ),
+                    isWindow = $.isWindow( withinElement[0] );
+            return {
+                element: withinElement,
+                isWindow: isWindow,
+                offset: withinElement.offset() || { left: 0, top: 0 },
+                scrollLeft: withinElement.scrollLeft(),
+                scrollTop: withinElement.scrollTop(),
+                width: isWindow ? withinElement.width() : withinElement.outerWidth(),
+                height: isWindow ? withinElement.height() : withinElement.outerHeight()
+            };
+        }
+    };
+
+    $.fn.position = function( options ) {
+        if ( !options || !options.of ) {
+            return _position.apply( this, arguments );
+        }
+
+        // make a copy, we don't want to modify arguments
+        options = $.extend( {}, options );
+
+        var atOffset, targetWidth, targetHeight, targetOffset, basePosition, dimensions,
+                target = $( options.of ),
+                within = $.position.getWithinInfo( options.within ),
+                scrollInfo = $.position.getScrollInfo( within ),
+                collision = ( options.collision || "flip" ).split( " " ),
+                offsets = {};
+
+        dimensions = getDimensions( target );
+        if ( target[0].preventDefault ) {
+            // force left top to allow flipping
+            options.at = "left top";
+        }
+        targetWidth = dimensions.width;
+        targetHeight = dimensions.height;
+        targetOffset = dimensions.offset;
+        // clone to reuse original targetOffset later
+        basePosition = $.extend( {}, targetOffset );
+
+        // force my and at to have valid horizontal and vertical positions
+        // if a value is missing or invalid, it will be converted to center
+        $.each( [ "my", "at" ], function() {
+            var pos = ( options[ this ] || "" ).split( " " ),
+                    horizontalOffset,
+                    verticalOffset;
+
+            if ( pos.length === 1) {
+                pos = rhorizontal.test( pos[ 0 ] ) ?
+                        pos.concat( [ "center" ] ) :
+                        rvertical.test( pos[ 0 ] ) ?
+                                [ "center" ].concat( pos ) :
+                                [ "center", "center" ];
+            }
+            pos[ 0 ] = rhorizontal.test( pos[ 0 ] ) ? pos[ 0 ] : "center";
+            pos[ 1 ] = rvertical.test( pos[ 1 ] ) ? pos[ 1 ] : "center";
+
+            // calculate offsets
+            horizontalOffset = roffset.exec( pos[ 0 ] );
+            verticalOffset = roffset.exec( pos[ 1 ] );
+            offsets[ this ] = [
+                horizontalOffset ? horizontalOffset[ 0 ] : 0,
+                verticalOffset ? verticalOffset[ 0 ] : 0
+            ];
+
+            // reduce to just the positions without the offsets
+            options[ this ] = [
+                rposition.exec( pos[ 0 ] )[ 0 ],
+                rposition.exec( pos[ 1 ] )[ 0 ]
+            ];
+        });
+
+        // normalize collision option
+        if ( collision.length === 1 ) {
+            collision[ 1 ] = collision[ 0 ];
+        }
+
+        if ( options.at[ 0 ] === "right" ) {
+            basePosition.left += targetWidth;
+        } else if ( options.at[ 0 ] === "center" ) {
+            basePosition.left += targetWidth / 2;
+        }
+
+        if ( options.at[ 1 ] === "bottom" ) {
+            basePosition.top += targetHeight;
+        } else if ( options.at[ 1 ] === "center" ) {
+            basePosition.top += targetHeight / 2;
+        }
+
+        atOffset = getOffsets( offsets.at, targetWidth, targetHeight );
+        basePosition.left += atOffset[ 0 ];
+        basePosition.top += atOffset[ 1 ];
+
+        return this.each(function() {
+            var collisionPosition, using,
+                    elem = $( this ),
+                    elemWidth = elem.outerWidth(),
+                    elemHeight = elem.outerHeight(),
+                    marginLeft = parseCss( this, "marginLeft" ),
+                    marginTop = parseCss( this, "marginTop" ),
+                    collisionWidth = elemWidth + marginLeft + parseCss( this, "marginRight" ) + scrollInfo.width,
+                    collisionHeight = elemHeight + marginTop + parseCss( this, "marginBottom" ) + scrollInfo.height,
+                    position = $.extend( {}, basePosition ),
+                    myOffset = getOffsets( offsets.my, elem.outerWidth(), elem.outerHeight() );
+
+            if ( options.my[ 0 ] === "right" ) {
+                position.left -= elemWidth;
+            } else if ( options.my[ 0 ] === "center" ) {
+                position.left -= elemWidth / 2;
+            }
+
+            if ( options.my[ 1 ] === "bottom" ) {
+                position.top -= elemHeight;
+            } else if ( options.my[ 1 ] === "center" ) {
+                position.top -= elemHeight / 2;
+            }
+
+            position.left += myOffset[ 0 ];
+            position.top += myOffset[ 1 ];
+
+            // if the browser doesn't support fractions, then round for consistent results
+            if ( !$.support.offsetFractions ) {
+                position.left = round( position.left );
+                position.top = round( position.top );
+            }
+
+            collisionPosition = {
+                marginLeft: marginLeft,
+                marginTop: marginTop
+            };
+
+            $.each( [ "left", "top" ], function( i, dir ) {
+                if ( $.ui.position[ collision[ i ] ] ) {
+                    $.ui.position[ collision[ i ] ][ dir ]( position, {
+                        targetWidth: targetWidth,
+                        targetHeight: targetHeight,
+                        elemWidth: elemWidth,
+                        elemHeight: elemHeight,
+                        collisionPosition: collisionPosition,
+                        collisionWidth: collisionWidth,
+                        collisionHeight: collisionHeight,
+                        offset: [ atOffset[ 0 ] + myOffset[ 0 ], atOffset [ 1 ] + myOffset[ 1 ] ],
+                        my: options.my,
+                        at: options.at,
+                        within: within,
+                        elem : elem
+                    });
+                }
+            });
+
+            if ( options.using ) {
+                // adds feedback as second argument to using callback, if present
+                using = function( props ) {
+                    var left = targetOffset.left - position.left,
+                            right = left + targetWidth - elemWidth,
+                            top = targetOffset.top - position.top,
+                            bottom = top + targetHeight - elemHeight,
+                            feedback = {
+                                target: {
+                                    element: target,
+                                    left: targetOffset.left,
+                                    top: targetOffset.top,
+                                    width: targetWidth,
+                                    height: targetHeight
+                                },
+                                element: {
+                                    element: elem,
+                                    left: position.left,
+                                    top: position.top,
+                                    width: elemWidth,
+                                    height: elemHeight
+                                },
+                                horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
+                                vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
+                            };
+                    if ( targetWidth < elemWidth && abs( left + right ) < targetWidth ) {
+                        feedback.horizontal = "center";
+                    }
+                    if ( targetHeight < elemHeight && abs( top + bottom ) < targetHeight ) {
+                        feedback.vertical = "middle";
+                    }
+                    if ( max( abs( left ), abs( right ) ) > max( abs( top ), abs( bottom ) ) ) {
+                        feedback.important = "horizontal";
+                    } else {
+                        feedback.important = "vertical";
+                    }
+                    options.using.call( this, props, feedback );
+                };
+            }
+
+            elem.offset( $.extend( position, { using: using } ) );
+        });
+    };
+
+    $.ui.position = {
+        fit: {
+            left: function( position, data ) {
+                var within = data.within,
+                        withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
+                        outerWidth = within.width,
+                        collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+                        overLeft = withinOffset - collisionPosLeft,
+                        overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
+                        newOverRight;
+
+                // element is wider than within
+                if ( data.collisionWidth > outerWidth ) {
+                    // element is initially over the left side of within
+                    if ( overLeft > 0 && overRight <= 0 ) {
+                        newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
+                        position.left += overLeft - newOverRight;
+                        // element is initially over right side of within
+                    } else if ( overRight > 0 && overLeft <= 0 ) {
+                        position.left = withinOffset;
+                        // element is initially over both left and right sides of within
+                    } else {
+                        if ( overLeft > overRight ) {
+                            position.left = withinOffset + outerWidth - data.collisionWidth;
+                        } else {
+                            position.left = withinOffset;
+                        }
+                    }
+                    // too far left -> align with left edge
+                } else if ( overLeft > 0 ) {
+                    position.left += overLeft;
+                    // too far right -> align with right edge
+                } else if ( overRight > 0 ) {
+                    position.left -= overRight;
+                    // adjust based on position and margin
+                } else {
+                    position.left = max( position.left - collisionPosLeft, position.left );
+                }
+            },
+            top: function( position, data ) {
+                var within = data.within,
+                        withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
+                        outerHeight = data.within.height,
+                        collisionPosTop = position.top - data.collisionPosition.marginTop,
+                        overTop = withinOffset - collisionPosTop,
+                        overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
+                        newOverBottom;
+
+                // element is taller than within
+                if ( data.collisionHeight > outerHeight ) {
+                    // element is initially over the top of within
+                    if ( overTop > 0 && overBottom <= 0 ) {
+                        newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
+                        position.top += overTop - newOverBottom;
+                        // element is initially over bottom of within
+                    } else if ( overBottom > 0 && overTop <= 0 ) {
+                        position.top = withinOffset;
+                        // element is initially over both top and bottom of within
+                    } else {
+                        if ( overTop > overBottom ) {
+                            position.top = withinOffset + outerHeight - data.collisionHeight;
+                        } else {
+                            position.top = withinOffset;
+                        }
+                    }
+                    // too far up -> align with top
+                } else if ( overTop > 0 ) {
+                    position.top += overTop;
+                    // too far down -> align with bottom edge
+                } else if ( overBottom > 0 ) {
+                    position.top -= overBottom;
+                    // adjust based on position and margin
+                } else {
+                    position.top = max( position.top - collisionPosTop, position.top );
+                }
+            }
+        },
+        flip: {
+            left: function( position, data ) {
+                var within = data.within,
+                        withinOffset = within.offset.left + within.scrollLeft,
+                        outerWidth = within.width,
+                        offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
+                        collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+                        overLeft = collisionPosLeft - offsetLeft,
+                        overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
+                        myOffset = data.my[ 0 ] === "left" ?
+                                -data.elemWidth :
+                                data.my[ 0 ] === "right" ?
+                                        data.elemWidth :
+                                        0,
+                        atOffset = data.at[ 0 ] === "left" ?
+                                data.targetWidth :
+                                data.at[ 0 ] === "right" ?
+                                        -data.targetWidth :
+                                        0,
+                        offset = -2 * data.offset[ 0 ],
+                        newOverRight,
+                        newOverLeft;
+
+                if ( overLeft < 0 ) {
+                    newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
+                    if ( newOverRight < 0 || newOverRight < abs( overLeft ) ) {
+                        position.left += myOffset + atOffset + offset;
+                    }
+                }
+                else if ( overRight > 0 ) {
+                    newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
+                    if ( newOverLeft > 0 || abs( newOverLeft ) < overRight ) {
+                        position.left += myOffset + atOffset + offset;
+                    }
+                }
+            },
+            top: function( position, data ) {
+                var within = data.within,
+                        withinOffset = within.offset.top + within.scrollTop,
+                        outerHeight = within.height,
+                        offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
+                        collisionPosTop = position.top - data.collisionPosition.marginTop,
+                        overTop = collisionPosTop - offsetTop,
+                        overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
+                        top = data.my[ 1 ] === "top",
+                        myOffset = top ?
+                                -data.elemHeight :
+                                data.my[ 1 ] === "bottom" ?
+                                        data.elemHeight :
+                                        0,
+                        atOffset = data.at[ 1 ] === "top" ?
+                                data.targetHeight :
+                                data.at[ 1 ] === "bottom" ?
+                                        -data.targetHeight :
+                                        0,
+                        offset = -2 * data.offset[ 1 ],
+                        newOverTop,
+                        newOverBottom;
+                if ( overTop < 0 ) {
+                    newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
+                    if ( ( position.top + myOffset + atOffset + offset) > overTop && ( newOverBottom < 0 || newOverBottom < abs( overTop ) ) ) {
+                        position.top += myOffset + atOffset + offset;
+                    }
+                }
+                else if ( overBottom > 0 ) {
+                    newOverTop = position.top -  data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
+                    if ( ( position.top + myOffset + atOffset + offset) > overBottom && ( newOverTop > 0 || abs( newOverTop ) < overBottom ) ) {
+                        position.top += myOffset + atOffset + offset;
+                    }
+                }
+            }
+        },
+        flipfit: {
+            left: function() {
+                $.ui.position.flip.left.apply( this, arguments );
+                $.ui.position.fit.left.apply( this, arguments );
+            },
+            top: function() {
+                $.ui.position.flip.top.apply( this, arguments );
+                $.ui.position.fit.top.apply( this, arguments );
+            }
+        }
+    };
+
+// fraction support test
+    (function () {
+        var testElement, testElementParent, testElementStyle, offsetLeft, i,
+                body = document.getElementsByTagName( "body" )[ 0 ],
+                div = document.createElement( "div" );
+
+        //Create a "fake body" for testing based on method used in jQuery.support
+        testElement = document.createElement( body ? "div" : "body" );
+        testElementStyle = {
+            visibility: "hidden",
+            width: 0,
+            height: 0,
+            border: 0,
+            margin: 0,
+            background: "none"
+        };
+        if ( body ) {
+            $.extend( testElementStyle, {
+                position: "absolute",
+                left: "-1000px",
+                top: "-1000px"
+            });
+        }
+        for ( i in testElementStyle ) {
+            testElement.style[ i ] = testElementStyle[ i ];
+        }
+        testElement.appendChild( div );
+        testElementParent = body || document.documentElement;
+        testElementParent.insertBefore( testElement, testElementParent.firstChild );
+
+        div.style.cssText = "position: absolute; left: 10.7432222px;";
+
+        offsetLeft = $( div ).offset().left;
+        $.support.offsetFractions = offsetLeft > 10 && offsetLeft < 11;
+
+        testElement.innerHTML = "";
+        testElementParent.removeChild( testElement );
+    })();
+
+}( jQuery ) );
+</script>
+<script type="text/javascript">/*!
+ * jQuery contextMenu - Plugin for simple contextMenu handling
+ *
+ * Version: git-master
+ *
+ * Authors: Rodney Rehm, Addy Osmani (patches for FF)
+ * Web: http://medialize.github.com/jQuery-contextMenu/
+ *
+ * Licensed under
+ *   MIT License http://www.opensource.org/licenses/mit-license
+ *   GPL v3 http://opensource.org/licenses/GPL-3.0
+ *
+ */
+(function($, undefined){
+
+    // TODO: -
+    // ARIA stuff: menuitem, menuitemcheckbox und menuitemradio
+    // create <menu> structure if $.support[htmlCommand || htmlMenuitem] and !opt.disableNative
+
+// determine html5 compatibility
+    $.support.htmlMenuitem = ('HTMLMenuItemElement' in window);
+    $.support.htmlCommand = ('HTMLCommandElement' in window);
+    $.support.eventSelectstart = ("onselectstart" in document.documentElement);
+    /* // should the need arise, test for css user-select
+     $.support.cssUserSelect = (function(){
+     var t = false,
+     e = document.createElement('div');
+
+     $.each('Moz|Webkit|Khtml|O|ms|Icab|'.split('|'), function(i, prefix) {
+     var propCC = prefix + (prefix ? 'U' : 'u') + 'serSelect',
+     prop = (prefix ? ('-' + prefix.toLowerCase() + '-') : '') + 'user-select';
+
+     e.style.cssText = prop + ': text;';
+     if (e.style[propCC] == 'text') {
+     t = true;
+     return false;
+     }
+
+     return true;
+     });
+
+     return t;
+     })();
+     */
+
+    if (!$.ui || !$.ui.widget) {
+        // duck punch $.cleanData like jQueryUI does to get that remove event
+        // https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.widget.js#L16-24
+        var _cleanData = $.cleanData;
+        $.cleanData = function( elems ) {
+            for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
+                try {
+                    $( elem ).triggerHandler( "remove" );
+                    // http://bugs.jquery.com/ticket/8235
+                } catch( e ) {}
+            }
+            _cleanData( elems );
+        };
+    }
+
+    var // currently active contextMenu trigger
+            $currentTrigger = null,
+    // is contextMenu initialized with at least one menu?
+            initialized = false,
+    // window handle
+            $win = $(window),
+    // number of registered menus
+            counter = 0,
+    // mapping selector to namespace
+            namespaces = {},
+    // mapping namespace to options
+            menus = {},
+    // custom command type handlers
+            types = {},
+    // default values
+            defaults = {
+                // selector of contextMenu trigger
+                selector: null,
+                // where to append the menu to
+                appendTo: null,
+                // method to trigger context menu ["right", "left", "hover"]
+                trigger: "right",
+                // hide menu when mouse leaves trigger / menu elements
+                autoHide: false,
+                // ms to wait before showing a hover-triggered context menu
+                delay: 200,
+                // flag denoting if a second trigger should simply move (true) or rebuild (false) an open menu
+                // as long as the trigger happened on one of the trigger-element's child nodes
+                reposition: true,
+                // determine position to show menu at
+                determinePosition: function($menu) {
+                    // position to the lower middle of the trigger element
+                    if ($.ui && $.ui.position) {
+                        // .position() is provided as a jQuery UI utility
+                        // (...and it won't work on hidden elements)
+                        $menu.css('display', 'block').position({
+                            my: "center top",
+                            at: "center bottom",
+                            of: this,
+                            offset: "0 5",
+                            collision: "fit"
+                        }).css('display', 'none');
+                    } else {
+                        // determine contextMenu position
+                        var offset = this.offset();
+                        offset.top += this.outerHeight();
+                        offset.left += this.outerWidth() / 2 - $menu.outerWidth() / 2;
+                        $menu.css(offset);
+                    }
+                },
+                // position menu
+                position: function(opt, x, y) {
+                    var $this = this,
+                            offset;
+                    // determine contextMenu position
+                    if (!x && !y) {
+                        opt.determinePosition.call(this, opt.$menu);
+                        return;
+                    } else if (x === "maintain" && y === "maintain") {
+                        // x and y must not be changed (after re-show on command click)
+                        offset = opt.$menu.position();
+                    } else {
+                        // x and y are given (by mouse event)
+                        offset = {top: y, left: x};
+                    }
+
+                    // correct offset if viewport demands it
+                    var bottom = $win.scrollTop() + $win.height(),
+                            right = $win.scrollLeft() + $win.width(),
+                            height = opt.$menu.height(),
+                            width = opt.$menu.width();
+
+                    if (offset.top + height > bottom) {
+                        offset.top -= height;
+                    }
+
+                    if (offset.left + width > right) {
+                        offset.left -= width;
+                    }
+
+                    opt.$menu.css(offset);
+                },
+                // position the sub-menu
+                positionSubmenu: function($menu) {
+                    if ($.ui && $.ui.position) {
+                        // .position() is provided as a jQuery UI utility
+                        // (...and it won't work on hidden elements)
+                        $menu.css('display', 'block').position({
+                            my: "left top",
+                            at: "right top",
+                            of: this,
+                            collision: "flipfit fit"
+                        }).css('display', '');
+                    } else {
+                        // determine contextMenu position
+                        var offset = {
+                            top: 0,
+                            left: this.outerWidth()
+                        };
+                        $menu.css(offset);
+                    }
+                },
+                // offset to add to zIndex
+                zIndex: 1,
+                // show hide animation settings
+                animation: {
+                    duration: 50,
+                    show: 'slideDown',
+                    hide: 'slideUp'
+                },
+                // events
+                events: {
+                    show: $.noop,
+                    hide: $.noop
+                },
+                // default callback
+                callback: null,
+                // list of contextMenu items
+                items: {}
+            },
+    // mouse position for hover activation
+            hoveract = {
+                timer: null,
+                pageX: null,
+                pageY: null
+            },
+    // determine zIndex
+            zindex = function($t) {
+                var zin = 0,
+                        $tt = $t;
+
+                while (true) {
+                    zin = Math.max(zin, parseInt($tt.css('z-index'), 10) || 0);
+                    $tt = $tt.parent();
+                    if (!$tt || !$tt.length || "html body".indexOf($tt.prop('nodeName').toLowerCase()) > -1 ) {
+                        break;
+                    }
+                }
+
+                return zin;
+            },
+    // event handlers
+            handle = {
+                // abort anything
+                abortevent: function(e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                },
+
+                // contextmenu show dispatcher
+                contextmenu: function(e) {
+                    var $this = $(this);
+
+                    // disable actual context-menu
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    // abort native-triggered events unless we're triggering on right click
+                    if (e.data.trigger != 'right' && e.originalEvent) {
+                        return;
+                    }
+
+                    // abort event if menu is visible for this trigger
+                    if ($this.hasClass('context-menu-active')) {
+                        return;
+                    }
+
+                    if (!$this.hasClass('context-menu-disabled')) {
+                        // theoretically need to fire a show event at <menu>
+                        // http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#context-menus
+                        // var evt = jQuery.Event("show", { data: data, pageX: e.pageX, pageY: e.pageY, relatedTarget: this });
+                        // e.data.$menu.trigger(evt);
+
+                        $currentTrigger = $this;
+                        if (e.data.build) {
+                            var built = e.data.build($currentTrigger, e);
+                            // abort if build() returned false
+                            if (built === false) {
+                                return;
+                            }
+
+                            // dynamically build menu on invocation
+                            e.data = $.extend(true, {}, defaults, e.data, built || {});
+
+                            // abort if there are no items to display
+                            if (!e.data.items || $.isEmptyObject(e.data.items)) {
+                                // Note: jQuery captures and ignores errors from event handlers
+                                if (window.console) {
+                                    (console.error || console.log)("No items specified to show in contextMenu");
+                                }
+
+                                throw new Error('No Items specified');
+                            }
+
+                            // backreference for custom command type creation
+                            e.data.$trigger = $currentTrigger;
+
+                            op.create(e.data);
+                        }
+                        // show menu
+                        op.show.call($this, e.data, e.pageX, e.pageY);
+                    }
+                },
+                // contextMenu left-click trigger
+                click: function(e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    $(this).trigger($.Event("contextmenu", { data: e.data, pageX: e.pageX, pageY: e.pageY }));
+                },
+                // contextMenu right-click trigger
+                mousedown: function(e) {
+                    // register mouse down
+                    var $this = $(this);
+
+                    // hide any previous menus
+                    if ($currentTrigger && $currentTrigger.length && !$currentTrigger.is($this)) {
+                        $currentTrigger.data('contextMenu').$menu.trigger('contextmenu:hide');
+                    }
+
+                    // activate on right click
+                    if (e.button == 2) {
+                        $currentTrigger = $this.data('contextMenuActive', true);
+                    }
+                },
+                // contextMenu right-click trigger
+                mouseup: function(e) {
+                    // show menu
+                    var $this = $(this);
+                    if ($this.data('contextMenuActive') && $currentTrigger && $currentTrigger.length && $currentTrigger.is($this) && !$this.hasClass('context-menu-disabled')) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        $currentTrigger = $this;
+                        $this.trigger($.Event("contextmenu", { data: e.data, pageX: e.pageX, pageY: e.pageY }));
+                    }
+
+                    $this.removeData('contextMenuActive');
+                },
+                // contextMenu hover trigger
+                mouseenter: function(e) {
+                    var $this = $(this),
+                            $related = $(e.relatedTarget),
+                            $document = $(document);
+
+                    // abort if we're coming from a menu
+                    if ($related.is('.context-menu-list') || $related.closest('.context-menu-list').length) {
+                        return;
+                    }
+
+                    // abort if a menu is shown
+                    if ($currentTrigger && $currentTrigger.length) {
+                        return;
+                    }
+
+                    hoveract.pageX = e.pageX;
+                    hoveract.pageY = e.pageY;
+                    hoveract.data = e.data;
+                    $document.on('mousemove.contextMenuShow', handle.mousemove);
+                    hoveract.timer = setTimeout(function() {
+                        hoveract.timer = null;
+                        $document.off('mousemove.contextMenuShow');
+                        $currentTrigger = $this;
+                        $this.trigger($.Event("contextmenu", { data: hoveract.data, pageX: hoveract.pageX, pageY: hoveract.pageY }));
+                    }, e.data.delay );
+                },
+                // contextMenu hover trigger
+                mousemove: function(e) {
+                    hoveract.pageX = e.pageX;
+                    hoveract.pageY = e.pageY;
+                },
+                // contextMenu hover trigger
+                mouseleave: function(e) {
+                    // abort if we're leaving for a menu
+                    var $related = $(e.relatedTarget);
+                    if ($related.is('.context-menu-list') || $related.closest('.context-menu-list').length) {
+                        return;
+                    }
+
+                    try {
+                        clearTimeout(hoveract.timer);
+                    } catch(e) {}
+
+                    hoveract.timer = null;
+                },
+
+                // click on layer to hide contextMenu
+                layerClick: function(e) {
+                    var $this = $(this),
+                            root = $this.data('contextMenuRoot'),
+                            mouseup = false,
+                            button = e.button,
+                            x = e.pageX,
+                            y = e.pageY,
+                            target,
+                            offset,
+                            selectors;
+
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    setTimeout(function() {
+                        var $window, hideshow, possibleTarget;
+                        var triggerAction = ((root.trigger == 'left' && button === 0) || (root.trigger == 'right' && button === 2));
+
+                        // find the element that would've been clicked, wasn't the layer in the way
+                        if (document.elementFromPoint) {
+                            root.$layer.hide();
+                            target = document.elementFromPoint(x - $win.scrollLeft(), y - $win.scrollTop());
+                            root.$layer.show();
+                        }
+
+                        if (root.reposition && triggerAction) {
+                            if (document.elementFromPoint) {
+                                if (root.$trigger.is(target) || root.$trigger.has(target).length) {
+                                    root.position.call(root.$trigger, root, x, y);
+                                    return;
+                                }
+                            } else {
+                                offset = root.$trigger.offset();
+                                $window = $(window);
+                                // while this looks kinda awful, it's the best way to avoid
+                                // unnecessarily calculating any positions
+                                offset.top += $window.scrollTop();
+                                if (offset.top <= e.pageY) {
+                                    offset.left += $window.scrollLeft();
+                                    if (offset.left <= e.pageX) {
+                                        offset.bottom = offset.top + root.$trigger.outerHeight();
+                                        if (offset.bottom >= e.pageY) {
+                                            offset.right = offset.left + root.$trigger.outerWidth();
+                                            if (offset.right >= e.pageX) {
+                                                // reposition
+                                                root.position.call(root.$trigger, root, x, y);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (target && triggerAction) {
+                            root.$trigger.one('contextmenu:hidden', function() {
+                                $(target).contextMenu({x: x, y: y});
+                            });
+                        }
+
+                        root.$menu.trigger('contextmenu:hide');
+                    }, 50);
+                },
+                // key handled :hover
+                keyStop: function(e, opt) {
+                    if (!opt.isInput) {
+                        e.preventDefault();
+                    }
+
+                    e.stopPropagation();
+                },
+                key: function(e) {
+                    var opt = $currentTrigger.data('contextMenu') || {};
+
+                    switch (e.keyCode) {
+                        case 9:
+                        case 38: // up
+                            handle.keyStop(e, opt);
+                            // if keyCode is [38 (up)] or [9 (tab) with shift]
+                            if (opt.isInput) {
+                                if (e.keyCode == 9 && e.shiftKey) {
+                                    e.preventDefault();
+                                    opt.$selected && opt.$selected.find('input, textarea, select').blur();
+                                    opt.$menu.trigger('prevcommand');
+                                    return;
+                                } else if (e.keyCode == 38 && opt.$selected.find('input, textarea, select').prop('type') == 'checkbox') {
+                                    // checkboxes don't capture this key
+                                    e.preventDefault();
+                                    return;
+                                }
+                            } else if (e.keyCode != 9 || e.shiftKey) {
+                                opt.$menu.trigger('prevcommand');
+                                return;
+                            }
+                        // omitting break;
+
+                        // case 9: // tab - reached through omitted break;
+                        case 40: // down
+                            handle.keyStop(e, opt);
+                            if (opt.isInput) {
+                                if (e.keyCode == 9) {
+                                    e.preventDefault();
+                                    opt.$selected && opt.$selected.find('input, textarea, select').blur();
+                                    opt.$menu.trigger('nextcommand');
+                                    return;
+                                } else if (e.keyCode == 40 && opt.$selected.find('input, textarea, select').prop('type') == 'checkbox') {
+                                    // checkboxes don't capture this key
+                                    e.preventDefault();
+                                    return;
+                                }
+                            } else {
+                                opt.$menu.trigger('nextcommand');
+                                return;
+                            }
+                            break;
+
+                        case 37: // left
+                            handle.keyStop(e, opt);
+                            if (opt.isInput || !opt.$selected || !opt.$selected.length) {
+                                break;
+                            }
+
+                            if (!opt.$selected.parent().hasClass('context-menu-root')) {
+                                var $parent = opt.$selected.parent().parent();
+                                opt.$selected.trigger('contextmenu:blur');
+                                opt.$selected = $parent;
+                                return;
+                            }
+                            break;
+
+                        case 39: // right
+                            handle.keyStop(e, opt);
+                            if (opt.isInput || !opt.$selected || !opt.$selected.length) {
+                                break;
+                            }
+
+                            var itemdata = opt.$selected.data('contextMenu') || {};
+                            if (itemdata.$menu && opt.$selected.hasClass('context-menu-submenu')) {
+                                opt.$selected = null;
+                                itemdata.$selected = null;
+                                itemdata.$menu.trigger('nextcommand');
+                                return;
+                            }
+                            break;
+
+                        case 35: // end
+                        case 36: // home
+                            if (opt.$selected && opt.$selected.find('input, textarea, select').length) {
+                                return;
+                            } else {
+                                (opt.$selected && opt.$selected.parent() || opt.$menu)
+                                        .children(':not(.disabled, .not-selectable)')[e.keyCode == 36 ? 'first' : 'last']()
+                                        .trigger('contextmenu:focus');
+                                e.preventDefault();
+                                return;
+                            }
+                            break;
+
+                        case 13: // enter
+                            handle.keyStop(e, opt);
+                            if (opt.isInput) {
+                                if (opt.$selected && !opt.$selected.is('textarea, select')) {
+                                    e.preventDefault();
+                                    return;
+                                }
+                                break;
+                            }
+                            opt.$selected && opt.$selected.trigger('mouseup');
+                            return;
+
+                        case 32: // space
+                        case 33: // page up
+                        case 34: // page down
+                            // prevent browser from scrolling down while menu is visible
+                            handle.keyStop(e, opt);
+                            return;
+
+                        case 27: // esc
+                            handle.keyStop(e, opt);
+                            opt.$menu.trigger('contextmenu:hide');
+                            return;
+
+                        default: // 0-9, a-z
+                            var k = (String.fromCharCode(e.keyCode)).toUpperCase();
+                            if (opt.accesskeys[k]) {
+                                // according to the specs accesskeys must be invoked immediately
+                                opt.accesskeys[k].$node.trigger(opt.accesskeys[k].$menu
+                                                ? 'contextmenu:focus'
+                                                : 'mouseup'
+                                );
+                                return;
+                            }
+                            break;
+                    }
+                    // pass event to selected item,
+                    // stop propagation to avoid endless recursion
+                    e.stopPropagation();
+                    opt.$selected && opt.$selected.trigger(e);
+                },
+
+                // select previous possible command in menu
+                prevItem: function(e) {
+                    e.stopPropagation();
+                    var opt = $(this).data('contextMenu') || {};
+
+                    // obtain currently selected menu
+                    if (opt.$selected) {
+                        var $s = opt.$selected;
+                        opt = opt.$selected.parent().data('contextMenu') || {};
+                        opt.$selected = $s;
+                    }
+
+                    var $children = opt.$menu.children(),
+                            $prev = !opt.$selected || !opt.$selected.prev().length ? $children.last() : opt.$selected.prev(),
+                            $round = $prev;
+
+                    // skip disabled
+                    while ($prev.hasClass('disabled') || $prev.hasClass('not-selectable')) {
+                        if ($prev.prev().length) {
+                            $prev = $prev.prev();
+                        } else {
+                            $prev = $children.last();
+                        }
+                        if ($prev.is($round)) {
+                            // break endless loop
+                            return;
+                        }
+                    }
+
+                    // leave current
+                    if (opt.$selected) {
+                        handle.itemMouseleave.call(opt.$selected.get(0), e);
+                    }
+
+                    // activate next
+                    handle.itemMouseenter.call($prev.get(0), e);
+
+                    // focus input
+                    var $input = $prev.find('input, textarea, select');
+                    if ($input.length) {
+                        $input.focus();
+                    }
+                },
+                // select next possible command in menu
+                nextItem: function(e) {
+                    e.stopPropagation();
+                    var opt = $(this).data('contextMenu') || {};
+
+                    // obtain currently selected menu
+                    if (opt.$selected) {
+                        var $s = opt.$selected;
+                        opt = opt.$selected.parent().data('contextMenu') || {};
+                        opt.$selected = $s;
+                    }
+
+                    var $children = opt.$menu.children(),
+                            $next = !opt.$selected || !opt.$selected.next().length ? $children.first() : opt.$selected.next(),
+                            $round = $next;
+
+                    // skip disabled
+                    while ($next.hasClass('disabled') || $next.hasClass('not-selectable')) {
+                        if ($next.next().length) {
+                            $next = $next.next();
+                        } else {
+                            $next = $children.first();
+                        }
+                        if ($next.is($round)) {
+                            // break endless loop
+                            return;
+                        }
+                    }
+
+                    // leave current
+                    if (opt.$selected) {
+                        handle.itemMouseleave.call(opt.$selected.get(0), e);
+                    }
+
+                    // activate next
+                    handle.itemMouseenter.call($next.get(0), e);
+
+                    // focus input
+                    var $input = $next.find('input, textarea, select');
+                    if ($input.length) {
+                        $input.focus();
+                    }
+                },
+
+                // flag that we're inside an input so the key handler can act accordingly
+                focusInput: function(e) {
+                    var $this = $(this).closest('.context-menu-item'),
+                            data = $this.data(),
+                            opt = data.contextMenu,
+                            root = data.contextMenuRoot;
+
+                    root.$selected = opt.$selected = $this;
+                    root.isInput = opt.isInput = true;
+                },
+                // flag that we're inside an input so the key handler can act accordingly
+                blurInput: function(e) {
+                    var $this = $(this).closest('.context-menu-item'),
+                            data = $this.data(),
+                            opt = data.contextMenu,
+                            root = data.contextMenuRoot;
+
+                    root.isInput = opt.isInput = false;
+                },
+
+                // :hover on menu
+                menuMouseenter: function(e) {
+                    var root = $(this).data().contextMenuRoot;
+                    root.hovering = true;
+                },
+                // :hover on menu
+                menuMouseleave: function(e) {
+                    var root = $(this).data().contextMenuRoot;
+                    if (root.$layer && root.$layer.is(e.relatedTarget)) {
+                        root.hovering = false;
+                    }
+                },
+
+                // :hover done manually so key handling is possible
+                itemMouseenter: function(e) {
+                    var $this = $(this),
+                            data = $this.data(),
+                            opt = data.contextMenu,
+                            root = data.contextMenuRoot;
+
+                    root.hovering = true;
+
+                    // abort if we're re-entering
+                    if (e && root.$layer && root.$layer.is(e.relatedTarget)) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                    }
+
+                    // make sure only one item is selected
+                    (opt.$menu ? opt : root).$menu
+                            .children('.hover').trigger('contextmenu:blur');
+
+                    if ($this.hasClass('disabled') || $this.hasClass('not-selectable')) {
+                        opt.$selected = null;
+                        return;
+                    }
+
+                    $this.trigger('contextmenu:focus');
+                },
+                // :hover done manually so key handling is possible
+                itemMouseleave: function(e) {
+                    var $this = $(this),
+                            data = $this.data(),
+                            opt = data.contextMenu,
+                            root = data.contextMenuRoot;
+
+                    if (root !== opt && root.$layer && root.$layer.is(e.relatedTarget)) {
+                        root.$selected && root.$selected.trigger('contextmenu:blur');
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        root.$selected = opt.$selected = opt.$node;
+                        return;
+                    }
+
+                    $this.trigger('contextmenu:blur');
+                },
+                // contextMenu item click
+                itemClick: function(e) {
+                    var $this = $(this),
+                            data = $this.data(),
+                            opt = data.contextMenu,
+                            root = data.contextMenuRoot,
+                            key = data.contextMenuKey,
+                            callback;
+
+                    // abort if the key is unknown or disabled or is a menu
+                    if (!opt.items[key] || $this.is('.disabled, .context-menu-submenu, .context-menu-separator, .not-selectable')) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    if ($.isFunction(root.callbacks[key]) && Object.prototype.hasOwnProperty.call(root.callbacks, key)) {
+                        // item-specific callback
+                        callback = root.callbacks[key];
+                    } else if ($.isFunction(root.callback)) {
+                        // default callback
+                        callback = root.callback;
+                    } else {
+                        // no callback, no action
+                        return;
+                    }
+
+                    // hide menu if callback doesn't stop that
+                    if (callback.call(root.$trigger, key, root) !== false) {
+                        root.$menu.trigger('contextmenu:hide');
+                    } else if (root.$menu.parent().length) {
+                        op.update.call(root.$trigger, root);
+                    }
+                },
+                // ignore click events on input elements
+                inputClick: function(e) {
+                    e.stopImmediatePropagation();
+                },
+
+                // hide <menu>
+                hideMenu: function(e, data) {
+                    var root = $(this).data('contextMenuRoot');
+                    op.hide.call(root.$trigger, root, data && data.force);
+                },
+                // focus <command>
+                focusItem: function(e) {
+                    e.stopPropagation();
+                    var $this = $(this),
+                            data = $this.data(),
+                            opt = data.contextMenu,
+                            root = data.contextMenuRoot;
+
+                    $this.addClass('hover')
+                            .siblings('.hover').trigger('contextmenu:blur');
+
+                    // remember selected
+                    opt.$selected = root.$selected = $this;
+
+                    // position sub-menu - do after show so dumb $.ui.position can keep up
+                    if (opt.$node) {
+                        root.positionSubmenu.call(opt.$node, opt.$menu);
+                    }
+                },
+                // blur <command>
+                blurItem: function(e) {
+                    e.stopPropagation();
+                    var $this = $(this),
+                            data = $this.data(),
+                            opt = data.contextMenu,
+                            root = data.contextMenuRoot;
+
+                    $this.removeClass('hover');
+                    opt.$selected = null;
+                }
+            },
+    // operations
+            op = {
+                show: function(opt, x, y) {
+                    var $trigger = $(this),
+                            offset,
+                            css = {};
+
+                    // hide any open menus
+                    $('#context-menu-layer').trigger('mousedown');
+
+                    // backreference for callbacks
+                    opt.$trigger = $trigger;
+
+                    // show event
+                    if (opt.events.show.call($trigger, opt) === false) {
+                        $currentTrigger = null;
+                        return;
+                    }
+
+                    // create or update context menu
+                    op.update.call($trigger, opt);
+
+                    // position menu
+                    opt.position.call($trigger, opt, x, y);
+
+                    // make sure we're in front
+                    if (opt.zIndex) {
+                        css.zIndex = zindex($trigger) + opt.zIndex;
+                    }
+
+                    // add layer
+                    op.layer.call(opt.$menu, opt, css.zIndex);
+
+                    // adjust sub-menu zIndexes
+                    opt.$menu.find('ul').css('zIndex', css.zIndex + 1);
+
+                    // position and show context menu
+                    opt.$menu.css( css )[opt.animation.show](opt.animation.duration, function() {
+                        $trigger.trigger('contextmenu:visible');
+                    });
+                    // make options available and set state
+                    $trigger
+                            .data('contextMenu', opt)
+                            .addClass("context-menu-active");
+
+                    // register key handler
+                    $(document).off('keydown.contextMenu').on('keydown.contextMenu', handle.key);
+                    // register autoHide handler
+                    if (opt.autoHide) {
+                        // mouse position handler
+                        $(document).on('mousemove.contextMenuAutoHide', function(e) {
+                            // need to capture the offset on mousemove,
+                            // since the page might've been scrolled since activation
+                            var pos = $trigger.offset();
+                            pos.right = pos.left + $trigger.outerWidth();
+                            pos.bottom = pos.top + $trigger.outerHeight();
+
+                            if (opt.$layer && !opt.hovering && (!(e.pageX >= pos.left && e.pageX <= pos.right) || !(e.pageY >= pos.top && e.pageY <= pos.bottom))) {
+                                // if mouse in menu...
+                                opt.$menu.trigger('contextmenu:hide');
+                            }
+                        });
+                    }
+                },
+                hide: function(opt, force) {
+                    var $trigger = $(this);
+                    if (!opt) {
+                        opt = $trigger.data('contextMenu') || {};
+                    }
+
+                    // hide event
+                    if (!force && opt.events && opt.events.hide.call($trigger, opt) === false) {
+                        return;
+                    }
+
+                    // remove options and revert state
+                    $trigger
+                            .removeData('contextMenu')
+                            .removeClass("context-menu-active");
+
+                    if (opt.$layer) {
+                        // keep layer for a bit so the contextmenu event can be aborted properly by opera
+                        setTimeout((function($layer) {
+                            return function(){
+                                $layer.remove();
+                            };
+                        })(opt.$layer), 10);
+
+                        try {
+                            delete opt.$layer;
+                        } catch(e) {
+                            opt.$layer = null;
+                        }
+                    }
+
+                    // remove handle
+                    $currentTrigger = null;
+                    // remove selected
+                    opt.$menu.find('.hover').trigger('contextmenu:blur');
+                    opt.$selected = null;
+                    // unregister key and mouse handlers
+                    //$(document).off('.contextMenuAutoHide keydown.contextMenu'); // http://bugs.jquery.com/ticket/10705
+                    $(document).off('.contextMenuAutoHide').off('keydown.contextMenu');
+                    // hide menu
+                    opt.$menu && opt.$menu[opt.animation.hide](opt.animation.duration, function (){
+                        // tear down dynamically built menu after animation is completed.
+                        if (opt.build) {
+                            opt.$menu.remove();
+                            $.each(opt, function(key, value) {
+                                switch (key) {
+                                    case 'ns':
+                                    case 'selector':
+                                    case 'build':
+                                    case 'trigger':
+                                        return true;
+
+                                    default:
+                                        opt[key] = undefined;
+                                        try {
+                                            delete opt[key];
+                                        } catch (e) {}
+                                        return true;
+                                }
+                            });
+                        }
+
+                        setTimeout(function() {
+                            $trigger.trigger('contextmenu:hidden');
+                        }, 10);
+                    });
+                },
+                create: function(opt, root) {
+                    if (root === undefined) {
+                        root = opt;
+                    }
+                    // create contextMenu
+                    opt.$menu = $('<ul class="context-menu-list"></ul>').addClass(opt.className || "").data({
+                        'contextMenu': opt,
+                        'contextMenuRoot': root
+                    });
+
+                    $.each(['callbacks', 'commands', 'inputs'], function(i,k){
+                        opt[k] = {};
+                        if (!root[k]) {
+                            root[k] = {};
+                        }
+                    });
+
+                    root.accesskeys || (root.accesskeys = {});
+
+                    // create contextMenu items
+                    $.each(opt.items, function(key, item){
+                        var $t = $('<li class="context-menu-item"></li>').addClass(item.className || ""),
+                                $label = null,
+                                $input = null;
+
+                        // iOS needs to see a click-event bound to an element to actually
+                        // have the TouchEvents infrastructure trigger the click event
+                        $t.on('click', $.noop);
+
+                        item.$node = $t.data({
+                            'contextMenu': opt,
+                            'contextMenuRoot': root,
+                            'contextMenuKey': key
+                        });
+
+                        // register accesskey
+                        // NOTE: the accesskey attribute should be applicable to any element, but Safari5 and Chrome13 still can't do that
+                        if (item.accesskey) {
+                            var aks = splitAccesskey(item.accesskey);
+                            for (var i=0, ak; ak = aks[i]; i++) {
+                                if (!root.accesskeys[ak]) {
+                                    root.accesskeys[ak] = item;
+                                    item._name = item.name.replace(new RegExp('(' + ak + ')', 'i'), '<span class="context-menu-accesskey">$1</span>');
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (typeof item == "string") {
+                            $t.addClass('context-menu-separator not-selectable');
+                        } else if (item.type && types[item.type]) {
+                            // run custom type handler
+                            types[item.type].call($t, item, opt, root);
+                            // register commands
+                            $.each([opt, root], function(i,k){
+                                k.commands[key] = item;
+                                if ($.isFunction(item.callback)) {
+                                    k.callbacks[key] = item.callback;
+                                }
+                            });
+                        } else {
+                            // add label for input
+                            if (item.type == 'html') {
+                                $t.addClass('context-menu-html not-selectable');
+                            } else if (item.type) {
+                                $label = $('<label></label>').appendTo($t);
+                                $('<span></span>').html(item._name || item.name).appendTo($label);
+                                $t.addClass('context-menu-input');
+                                opt.hasTypes = true;
+                                $.each([opt, root], function(i,k){
+                                    k.commands[key] = item;
+                                    k.inputs[key] = item;
+                                });
+                            } else if (item.items) {
+                                item.type = 'sub';
+                            }
+
+                            switch (item.type) {
+                                case 'text':
+                                    $input = $('<input type="text" value="1" name="" value="">')
+                                            .attr('name', 'context-menu-input-' + key)
+                                            .val(item.value || "")
+                                            .appendTo($label);
+                                    break;
+
+                                case 'textarea':
+                                    $input = $('<textarea name=""></textarea>')
+                                            .attr('name', 'context-menu-input-' + key)
+                                            .val(item.value || "")
+                                            .appendTo($label);
+
+                                    if (item.height) {
+                                        $input.height(item.height);
+                                    }
+                                    break;
+
+                                case 'checkbox':
+                                    $input = $('<input type="checkbox" value="1" name="" value="">')
+                                            .attr('name', 'context-menu-input-' + key)
+                                            .val(item.value || "")
+                                            .prop("checked", !!item.selected)
+                                            .prependTo($label);
+                                    break;
+
+                                case 'radio':
+                                    $input = $('<input type="radio" value="1" name="" value="">')
+                                            .attr('name', 'context-menu-input-' + item.radio)
+                                            .val(item.value || "")
+                                            .prop("checked", !!item.selected)
+                                            .prependTo($label);
+                                    break;
+
+                                case 'select':
+                                    $input = $('<select name="">')
+                                            .attr('name', 'context-menu-input-' + key)
+                                            .appendTo($label);
+                                    if (item.options) {
+                                        $.each(item.options, function(value, text) {
+                                            $('<option></option>').val(value).text(text).appendTo($input);
+                                        });
+                                        $input.val(item.selected);
+                                    }
+                                    break;
+
+                                case 'sub':
+                                    // FIXME: shouldn't this .html() be a .text()?
+                                    $('<span></span>').html(item._name || item.name).appendTo($t);
+                                    item.appendTo = item.$node;
+                                    op.create(item, root);
+                                    $t.data('contextMenu', item).addClass('context-menu-submenu');
+                                    item.callback = null;
+                                    break;
+
+                                case 'html':
+                                    $(item.html).appendTo($t);
+                                    break;
+
+                                default:
+                                    $.each([opt, root], function(i,k){
+                                        k.commands[key] = item;
+                                        if ($.isFunction(item.callback)) {
+                                            k.callbacks[key] = item.callback;
+                                        }
+                                    });
+                                    // FIXME: shouldn't this .html() be a .text()?
+                                    $('<span></span>').html(item._name || item.name || "").appendTo($t);
+                                    break;
+                            }
+
+                            // disable key listener in <input>
+                            if (item.type && item.type != 'sub' && item.type != 'html') {
+                                $input
+                                        .on('focus', handle.focusInput)
+                                        .on('blur', handle.blurInput);
+
+                                if (item.events) {
+                                    $input.on(item.events, opt);
+                                }
+                            }
+
+                            // add icons
+                            if (item.icon) {
+                                $t.addClass("icon icon-" + item.icon);
+                            }
+                        }
+
+                        // cache contained elements
+                        item.$input = $input;
+                        item.$label = $label;
+
+                        // attach item to menu
+                        $t.appendTo(opt.$menu);
+
+                        // Disable text selection
+                        if (!opt.hasTypes && $.support.eventSelectstart) {
+                            // browsers support user-select: none,
+                            // IE has a special event for text-selection
+                            // browsers supporting neither will not be preventing text-selection
+                            $t.on('selectstart.disableTextSelect', handle.abortevent);
+                        }
+                    });
+                    // attach contextMenu to <body> (to bypass any possible overflow:hidden issues on parents of the trigger element)
+                    if (!opt.$node) {
+                        opt.$menu.css('display', 'none').addClass('context-menu-root');
+                    }
+                    opt.$menu.appendTo(opt.appendTo || document.body);
+                },
+                resize: function($menu, nested) {
+                    // determine widths of submenus, as CSS won't grow them automatically
+                    // position:absolute within position:absolute; min-width:100; max-width:200; results in width: 100;
+                    // kinda sucks hard...
+
+                    // determine width of absolutely positioned element
+                    $menu.css({position: 'absolute', display: 'block'});
+                    // don't apply yet, because that would break nested elements' widths
+                    // add a pixel to circumvent word-break issue in IE9 - #80
+                    $menu.data('width', Math.ceil($menu.width()) + 1);
+                    // reset styles so they allow nested elements to grow/shrink naturally
+                    $menu.css({
+                        position: 'static',
+                        minWidth: '0px',
+                        maxWidth: '100000px'
+                    });
+                    // identify width of nested menus
+                    $menu.find('> li > ul').each(function() {
+                        op.resize($(this), true);
+                    });
+                    // reset and apply changes in the end because nested
+                    // elements' widths wouldn't be calculatable otherwise
+                    if (!nested) {
+                        $menu.find('ul').andSelf().css({
+                            position: '',
+                            display: '',
+                            minWidth: '',
+                            maxWidth: ''
+                        }).width(function() {
+                            return $(this).data('width');
+                        });
+                    }
+                },
+                update: function(opt, root) {
+                    var $trigger = this;
+                    if (root === undefined) {
+                        root = opt;
+                        op.resize(opt.$menu);
+                    }
+                    // re-check disabled for each item
+                    opt.$menu.children().each(function(){
+                        var $item = $(this),
+                                key = $item.data('contextMenuKey'),
+                                item = opt.items[key],
+                                disabled = ($.isFunction(item.disabled) && item.disabled.call($trigger, key, root)) || item.disabled === true;
+
+                        // dis- / enable item
+                        $item[disabled ? 'addClass' : 'removeClass']('disabled');
+
+                        if (item.type) {
+                            // dis- / enable input elements
+                            $item.find('input, select, textarea').prop('disabled', disabled);
+
+                            // update input states
+                            switch (item.type) {
+                                case 'text':
+                                case 'textarea':
+                                    item.$input.val(item.value || "");
+                                    break;
+
+                                case 'checkbox':
+                                case 'radio':
+                                    item.$input.val(item.value || "").prop('checked', !!item.selected);
+                                    break;
+
+                                case 'select':
+                                    item.$input.val(item.selected || "");
+                                    break;
+                            }
+                        }
+
+                        if (item.$menu) {
+                            // update sub-menu
+                            op.update.call($trigger, item, root);
+                        }
+                    });
+                },
+                layer: function(opt, zIndex) {
+                    // add transparent layer for click area
+                    // filter and background for Internet Explorer, Issue #23
+                    var $layer = opt.$layer = $('<div id="context-menu-layer" style="position:fixed; z-index:' + zIndex + '; top:0; left:0; opacity: 0; filter: alpha(opacity=0); background-color: #000;"></div>')
+                            .css({height: $win.height(), width: $win.width(), display: 'block'})
+                            .data('contextMenuRoot', opt)
+                            .insertBefore(this)
+                            .on('contextmenu', handle.abortevent)
+                            .on('mousedown', handle.layerClick);
+
+                    // IE6 doesn't know position:fixed;
+                    if (!$.support.fixedPosition) {
+                        $layer.css({
+                            'position' : 'absolute',
+                            'height' : $(document).height()
+                        });
+                    }
+
+                    return $layer;
+                }
+            };
+
+// split accesskey according to http://www.whatwg.org/specs/web-apps/current-work/multipage/editing.html#assigned-access-key
+    function splitAccesskey(val) {
+        var t = val.split(/\s+/),
+                keys = [];
+
+        for (var i=0, k; k = t[i]; i++) {
+            k = k[0].toUpperCase(); // first character only
+            // theoretically non-accessible characters should be ignored, but different systems, different keyboard layouts, ... screw it.
+            // a map to look up already used access keys would be nice
+            keys.push(k);
+        }
+
+        return keys;
+    }
+
+// handle contextMenu triggers
+    $.fn.contextMenu = function(operation) {
+        if (operation === undefined) {
+            this.first().trigger('contextmenu');
+        } else if (operation.x && operation.y) {
+            this.first().trigger($.Event("contextmenu", {pageX: operation.x, pageY: operation.y}));
+        } else if (operation === "hide") {
+            var $menu = this.data('contextMenu').$menu;
+            $menu && $menu.trigger('contextmenu:hide');
+        } else if (operation === "destroy") {
+            $.contextMenu("destroy", {context: this});
+        } else if ($.isPlainObject(operation)) {
+            operation.context = this;
+            $.contextMenu("create", operation);
+        } else if (operation) {
+            this.removeClass('context-menu-disabled');
+        } else if (!operation) {
+            this.addClass('context-menu-disabled');
+        }
+
+        return this;
+    };
+
+// manage contextMenu instances
+    $.contextMenu = function(operation, options) {
+        if (typeof operation != 'string') {
+            options = operation;
+            operation = 'create';
+        }
+
+        if (typeof options == 'string') {
+            options = {selector: options};
+        } else if (options === undefined) {
+            options = {};
+        }
+
+        // merge with default options
+        var o = $.extend(true, {}, defaults, options || {});
+        var $document = $(document);
+        var $context = $document;
+        var _hasContext = false;
+
+        if (!o.context || !o.context.length) {
+            o.context = document;
+        } else {
+            // you never know what they throw at you...
+            $context = $(o.context).first();
+            o.context = $context.get(0);
+            _hasContext = o.context !== document;
+        }
+
+        switch (operation) {
+            case 'create':
+                // no selector no joy
+                if (!o.selector) {
+                    throw new Error('No selector specified');
+                }
+                // make sure internal classes are not bound to
+                if (o.selector.match(/.context-menu-(list|item|input)($|\s)/)) {
+                    throw new Error('Cannot bind to selector "' + o.selector + '" as it contains a reserved className');
+                }
+                if (!o.build && (!o.items || $.isEmptyObject(o.items))) {
+                    throw new Error('No Items specified');
+                }
+                counter ++;
+                o.ns = '.contextMenu' + counter;
+                if (!_hasContext) {
+                    namespaces[o.selector] = o.ns;
+                }
+                menus[o.ns] = o;
+
+                // default to right click
+                if (!o.trigger) {
+                    o.trigger = 'right';
+                }
+
+                if (!initialized) {
+                    // make sure item click is registered first
+                    $document
+                            .on({
+                                'contextmenu:hide.contextMenu': handle.hideMenu,
+                                'prevcommand.contextMenu': handle.prevItem,
+                                'nextcommand.contextMenu': handle.nextItem,
+                                'contextmenu.contextMenu': handle.abortevent,
+                                'mouseenter.contextMenu': handle.menuMouseenter,
+                                'mouseleave.contextMenu': handle.menuMouseleave
+                            }, '.context-menu-list')
+                            .on('mouseup.contextMenu', '.context-menu-input', handle.inputClick)
+                            .on({
+                                'mouseup.contextMenu': handle.itemClick,
+                                'contextmenu:focus.contextMenu': handle.focusItem,
+                                'contextmenu:blur.contextMenu': handle.blurItem,
+                                'contextmenu.contextMenu': handle.abortevent,
+                                'mouseenter.contextMenu': handle.itemMouseenter,
+                                'mouseleave.contextMenu': handle.itemMouseleave
+                            }, '.context-menu-item');
+
+                    initialized = true;
+                }
+
+                // engage native contextmenu event
+                $context
+                        .on('contextmenu' + o.ns, o.selector, o, handle.contextmenu);
+
+                if (_hasContext) {
+                    // add remove hook, just in case
+                    $context.on('remove' + o.ns, function() {
+                        $(this).contextMenu("destroy");
+                    });
+                }
+
+                switch (o.trigger) {
+                    case 'hover':
+                        $context
+                                .on('mouseenter' + o.ns, o.selector, o, handle.mouseenter)
+                                .on('mouseleave' + o.ns, o.selector, o, handle.mouseleave);
+                        break;
+
+                    case 'left':
+                        $context.on('click' + o.ns, o.selector, o, handle.click);
+                        break;
+                    /*
+                     default:
+                     // http://www.quirksmode.org/dom/events/contextmenu.html
+                     $document
+                     .on('mousedown' + o.ns, o.selector, o, handle.mousedown)
+                     .on('mouseup' + o.ns, o.selector, o, handle.mouseup);
+                     break;
+                     */
+                }
+
+                // create menu
+                if (!o.build) {
+                    op.create(o);
+                }
+                break;
+
+            case 'destroy':
+                var $visibleMenu;
+                if (_hasContext) {
+                    // get proper options
+                    var context = o.context;
+                    $.each(menus, function(ns, o) {
+                        if (o.context !== context) {
+                            return true;
+                        }
+
+                        $visibleMenu = $('.context-menu-list').filter(':visible');
+                        if ($visibleMenu.length && $visibleMenu.data().contextMenuRoot.$trigger.is($(o.context).find(o.selector))) {
+                            $visibleMenu.trigger('contextmenu:hide', {force: true});
+                        }
+
+                        try {
+                            if (menus[o.ns].$menu) {
+                                menus[o.ns].$menu.remove();
+                            }
+
+                            delete menus[o.ns];
+                        } catch(e) {
+                            menus[o.ns] = null;
+                        }
+
+                        $(o.context).off(o.ns);
+
+                        return true;
+                    });
+                } else if (!o.selector) {
+                    $document.off('.contextMenu .contextMenuAutoHide');
+                    $.each(menus, function(ns, o) {
+                        $(o.context).off(o.ns);
+                    });
+
+                    namespaces = {};
+                    menus = {};
+                    counter = 0;
+                    initialized = false;
+
+                    $('#context-menu-layer, .context-menu-list').remove();
+                } else if (namespaces[o.selector]) {
+                    $visibleMenu = $('.context-menu-list').filter(':visible');
+                    if ($visibleMenu.length && $visibleMenu.data().contextMenuRoot.$trigger.is(o.selector)) {
+                        $visibleMenu.trigger('contextmenu:hide', {force: true});
+                    }
+
+                    try {
+                        if (menus[namespaces[o.selector]].$menu) {
+                            menus[namespaces[o.selector]].$menu.remove();
+                        }
+
+                        delete menus[namespaces[o.selector]];
+                    } catch(e) {
+                        menus[namespaces[o.selector]] = null;
+                    }
+
+                    $document.off(namespaces[o.selector]);
+                }
+                break;
+
+            case 'html5':
+                // if <command> or <menuitem> are not handled by the browser,
+                // or options was a bool true,
+                // initialize $.contextMenu for them
+                if ((!$.support.htmlCommand && !$.support.htmlMenuitem) || (typeof options == "boolean" && options)) {
+                    $('menu[type="context"]').each(function() {
+                        if (this.id) {
+                            $.contextMenu({
+                                selector: '[contextmenu=' + this.id +']',
+                                items: $.contextMenu.fromMenu(this)
+                            });
+                        }
+                    }).css('display', 'none');
+                }
+                break;
+
+            default:
+                throw new Error('Unknown operation "' + operation + '"');
+        }
+
+        return this;
+    };
+
+// import values into <input> commands
+    $.contextMenu.setInputValues = function(opt, data) {
+        if (data === undefined) {
+            data = {};
+        }
+
+        $.each(opt.inputs, function(key, item) {
+            switch (item.type) {
+                case 'text':
+                case 'textarea':
+                    item.value = data[key] || "";
+                    break;
+
+                case 'checkbox':
+                    item.selected = data[key] ? true : false;
+                    break;
+
+                case 'radio':
+                    item.selected = (data[item.radio] || "") == item.value ? true : false;
+                    break;
+
+                case 'select':
+                    item.selected = data[key] || "";
+                    break;
+            }
+        });
+    };
+
+// export values from <input> commands
+    $.contextMenu.getInputValues = function(opt, data) {
+        if (data === undefined) {
+            data = {};
+        }
+
+        $.each(opt.inputs, function(key, item) {
+            switch (item.type) {
+                case 'text':
+                case 'textarea':
+                case 'select':
+                    data[key] = item.$input.val();
+                    break;
+
+                case 'checkbox':
+                    data[key] = item.$input.prop('checked');
+                    break;
+
+                case 'radio':
+                    if (item.$input.prop('checked')) {
+                        data[item.radio] = item.value;
+                    }
+                    break;
+            }
+        });
+
+        return data;
+    };
+
+// find <label for="xyz">
+    function inputLabel(node) {
+        return (node.id && $('label[for="'+ node.id +'"]').val()) || node.name;
+    }
+
+// convert <menu> to items object
+    function menuChildren(items, $children, counter) {
+        if (!counter) {
+            counter = 0;
+        }
+
+        $children.each(function() {
+            var $node = $(this),
+                    node = this,
+                    nodeName = this.nodeName.toLowerCase(),
+                    label,
+                    item;
+
+            // extract <label><input>
+            if (nodeName == 'label' && $node.find('input, textarea, select').length) {
+                label = $node.text();
+                $node = $node.children().first();
+                node = $node.get(0);
+                nodeName = node.nodeName.toLowerCase();
+            }
+
+            /*
+             * <menu> accepts flow-content as children. that means <embed>, <canvas> and such are valid menu items.
+             * Not being the sadistic kind, $.contextMenu only accepts:
+             * <command>, <menuitem>, <hr>, <span>, <p> <input [text, radio, checkbox]>, <textarea>, <select> and of course <menu>.
+             * Everything else will be imported as an html node, which is not interfaced with contextMenu.
+             */
+
+            // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#concept-command
+            switch (nodeName) {
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#the-menu-element
+                case 'menu':
+                    item = {name: $node.attr('label'), items: {}};
+                    counter = menuChildren(item.items, $node.children(), counter);
+                    break;
+
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#using-the-a-element-to-define-a-command
+                case 'a':
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#using-the-button-element-to-define-a-command
+                case 'button':
+                    item = {
+                        name: $node.text(),
+                        disabled: !!$node.attr('disabled'),
+                        callback: (function(){ return function(){ $node.click(); }; })()
+                    };
+                    break;
+
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#using-the-command-element-to-define-a-command
+
+                case 'menuitem':
+                case 'command':
+                    switch ($node.attr('type')) {
+                        case undefined:
+                        case 'command':
+                        case 'menuitem':
+                            item = {
+                                name: $node.attr('label'),
+                                disabled: !!$node.attr('disabled'),
+                                callback: (function(){ return function(){ $node.click(); }; })()
+                            };
+                            break;
+
+                        case 'checkbox':
+                            item = {
+                                type: 'checkbox',
+                                disabled: !!$node.attr('disabled'),
+                                name: $node.attr('label'),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+
+                        case 'radio':
+                            item = {
+                                type: 'radio',
+                                disabled: !!$node.attr('disabled'),
+                                name: $node.attr('label'),
+                                radio: $node.attr('radiogroup'),
+                                value: $node.attr('id'),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+
+                        default:
+                            item = undefined;
+                    }
+                    break;
+
+                case 'hr':
+                    item = '-------';
+                    break;
+
+                case 'input':
+                    switch ($node.attr('type')) {
+                        case 'text':
+                            item = {
+                                type: 'text',
+                                name: label || inputLabel(node),
+                                disabled: !!$node.attr('disabled'),
+                                value: $node.val()
+                            };
+                            break;
+
+                        case 'checkbox':
+                            item = {
+                                type: 'checkbox',
+                                name: label || inputLabel(node),
+                                disabled: !!$node.attr('disabled'),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+
+                        case 'radio':
+                            item = {
+                                type: 'radio',
+                                name: label || inputLabel(node),
+                                disabled: !!$node.attr('disabled'),
+                                radio: !!$node.attr('name'),
+                                value: $node.val(),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+
+                        default:
+                            item = undefined;
+                            break;
+                    }
+                    break;
+
+                case 'select':
+                    item = {
+                        type: 'select',
+                        name: label || inputLabel(node),
+                        disabled: !!$node.attr('disabled'),
+                        selected: $node.val(),
+                        options: {}
+                    };
+                    $node.children().each(function(){
+                        item.options[this.value] = $(this).text();
+                    });
+                    break;
+
+                case 'textarea':
+                    item = {
+                        type: 'textarea',
+                        name: label || inputLabel(node),
+                        disabled: !!$node.attr('disabled'),
+                        value: $node.val()
+                    };
+                    break;
+
+                case 'label':
+                    break;
+
+                default:
+                    item = {type: 'html', html: $node.clone(true)};
+                    break;
+            }
+
+            if (item) {
+                counter++;
+                items['key' + counter] = item;
+            }
+        });
+
+        return counter;
+    }
+
+// convert html5 menu
+    $.contextMenu.fromMenu = function(element) {
+        var $this = $(element),
+                items = {};
+
+        menuChildren(items, $this.children());
+
+        return items;
+    };
+
+// make defaults accessible
+    $.contextMenu.defaults = defaults;
+    $.contextMenu.types = types;
+// export internal functions - undocumented, for hacking only!
+    $.contextMenu.handle = handle;
+    $.contextMenu.op = op;
+    $.contextMenu.menus = menus;
+
+})(jQuery);
+</script>
+<script type="text/javascript">/**
+ *
+ * Color picker
+ * Author: Stefan Petre www.eyecon.ro
+ *
+ * Dual licensed under the MIT and GPL licenses
+ *
+ */
+(function ($) {
+    var ColorPicker = function () {
+        var
+                ids = {},
+                inAction,
+                charMin = 65,
+                visible,
+                tpl = '<div class="colorpicker"><div class="colorpicker_color"><div><div></div></div></div><div class="colorpicker_hue"><div></div></div><div class="colorpicker_new_color"></div><div class="colorpicker_current_color"></div><div class="colorpicker_hex"><input type="text" maxlength="6" size="6" /></div><div class="colorpicker_rgb_r colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_rgb_g colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_rgb_b colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_hsb_h colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_hsb_s colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_hsb_b colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_submit"></div></div>',
+                defaults = {
+                    eventName: 'click',
+                    onShow: function () {},
+                    onBeforeShow: function(){},
+                    onHide: function () {},
+                    onChange: function () {},
+                    onSubmit: function () {},
+                    color: 'ff0000',
+                    livePreview: true,
+                    flat: false
+                },
+                fillRGBFields = function  (hsb, cal) {
+                    var rgb = HSBToRGB(hsb);
+                    $(cal).data('colorpicker').fields
+                            .eq(1).val(rgb.r).end()
+                            .eq(2).val(rgb.g).end()
+                            .eq(3).val(rgb.b).end();
+                },
+                fillHSBFields = function  (hsb, cal) {
+                    $(cal).data('colorpicker').fields
+                            .eq(4).val(hsb.h).end()
+                            .eq(5).val(hsb.s).end()
+                            .eq(6).val(hsb.b).end();
+                },
+                fillHexFields = function (hsb, cal) {
+                    $(cal).data('colorpicker').fields
+                            .eq(0).val(HSBToHex(hsb)).end();
+                },
+                setSelector = function (hsb, cal) {
+                    $(cal).data('colorpicker').selector.css('backgroundColor', '#' + HSBToHex({h: hsb.h, s: 100, b: 100}));
+                    $(cal).data('colorpicker').selectorIndic.css({
+                        left: parseInt(150 * hsb.s/100, 10),
+                        top: parseInt(150 * (100-hsb.b)/100, 10)
+                    });
+                },
+                setHue = function (hsb, cal) {
+                    $(cal).data('colorpicker').hue.css('top', parseInt(150 - 150 * hsb.h/360, 10));
+                },
+                setCurrentColor = function (hsb, cal) {
+                    $(cal).data('colorpicker').currentColor.css('backgroundColor', '#' + HSBToHex(hsb));
+                },
+                setNewColor = function (hsb, cal) {
+                    $(cal).data('colorpicker').newColor.css('backgroundColor', '#' + HSBToHex(hsb));
+                },
+                keyDown = function (ev) {
+                    var pressedKey = ev.charCode || ev.keyCode || -1;
+                    if ((pressedKey > charMin && pressedKey <= 90) || pressedKey == 32) {
+                        return false;
+                    }
+                    var cal = $(this).parent().parent();
+                    if (cal.data('colorpicker').livePreview === true) {
+                        change.apply(this);
+                    }
+                },
+                change = function (ev) {
+                    var cal = $(this).parent().parent(), col;
+                    if (this.parentNode.className.indexOf('_hex') > 0) {
+                        cal.data('colorpicker').color = col = HexToHSB(fixHex(this.value));
+                    } else if (this.parentNode.className.indexOf('_hsb') > 0) {
+                        cal.data('colorpicker').color = col = fixHSB({
+                            h: parseInt(cal.data('colorpicker').fields.eq(4).val(), 10),
+                            s: parseInt(cal.data('colorpicker').fields.eq(5).val(), 10),
+                            b: parseInt(cal.data('colorpicker').fields.eq(6).val(), 10)
+                        });
+                    } else {
+                        cal.data('colorpicker').color = col = RGBToHSB(fixRGB({
+                            r: parseInt(cal.data('colorpicker').fields.eq(1).val(), 10),
+                            g: parseInt(cal.data('colorpicker').fields.eq(2).val(), 10),
+                            b: parseInt(cal.data('colorpicker').fields.eq(3).val(), 10)
+                        }));
+                    }
+                    if (ev) {
+                        fillRGBFields(col, cal.get(0));
+                        fillHexFields(col, cal.get(0));
+                        fillHSBFields(col, cal.get(0));
+                    }
+                    setSelector(col, cal.get(0));
+                    setHue(col, cal.get(0));
+                    setNewColor(col, cal.get(0));
+                    cal.data('colorpicker').onChange.apply(cal, [col, HSBToHex(col), HSBToRGB(col)]);
+                },
+                blur = function (ev) {
+                    var cal = $(this).parent().parent();
+                    cal.data('colorpicker').fields.parent().removeClass('colorpicker_focus');
+                },
+                focus = function () {
+                    charMin = this.parentNode.className.indexOf('_hex') > 0 ? 70 : 65;
+                    $(this).parent().parent().data('colorpicker').fields.parent().removeClass('colorpicker_focus');
+                    $(this).parent().addClass('colorpicker_focus');
+                },
+                downIncrement = function (ev) {
+                    var field = $(this).parent().find('input').focus();
+                    var current = {
+                        el: $(this).parent().addClass('colorpicker_slider'),
+                        max: this.parentNode.className.indexOf('_hsb_h') > 0 ? 360 : (this.parentNode.className.indexOf('_hsb') > 0 ? 100 : 255),
+                        y: ev.pageY,
+                        field: field,
+                        val: parseInt(field.val(), 10),
+                        preview: $(this).parent().parent().data('colorpicker').livePreview
+                    };
+                    $(document).bind('mouseup', current, upIncrement);
+                    $(document).bind('mousemove', current, moveIncrement);
+                },
+                moveIncrement = function (ev) {
+                    ev.data.field.val(Math.max(0, Math.min(ev.data.max, parseInt(ev.data.val + ev.pageY - ev.data.y, 10))));
+                    if (ev.data.preview) {
+                        change.apply(ev.data.field.get(0), [true]);
+                    }
+                    return false;
+                },
+                upIncrement = function (ev) {
+                    change.apply(ev.data.field.get(0), [true]);
+                    ev.data.el.removeClass('colorpicker_slider').find('input').focus();
+                    $(document).unbind('mouseup', upIncrement);
+                    $(document).unbind('mousemove', moveIncrement);
+                    return false;
+                },
+                downHue = function (ev) {
+                    var current = {
+                        cal: $(this).parent(),
+                        y: $(this).offset().top
+                    };
+                    current.preview = current.cal.data('colorpicker').livePreview;
+                    $(document).bind('mouseup', current, upHue);
+                    $(document).bind('mousemove', current, moveHue);
+                },
+                moveHue = function (ev) {
+                    change.apply(
+                            ev.data.cal.data('colorpicker')
+                                    .fields
+                                    .eq(4)
+                                    .val(parseInt(360*(150 - Math.max(0,Math.min(150,(ev.pageY - ev.data.y))))/150, 10))
+                                    .get(0),
+                            [ev.data.preview]
+                    );
+                    return false;
+                },
+                upHue = function (ev) {
+                    fillRGBFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
+                    fillHexFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
+                    $(document).unbind('mouseup', upHue);
+                    $(document).unbind('mousemove', moveHue);
+                    return false;
+                },
+                downSelector = function (ev) {
+                    var current = {
+                        cal: $(this).parent(),
+                        pos: $(this).offset()
+                    };
+                    current.preview = current.cal.data('colorpicker').livePreview;
+                    $(document).bind('mouseup', current, upSelector);
+                    $(document).bind('mousemove', current, moveSelector);
+                },
+                moveSelector = function (ev) {
+                    change.apply(
+                            ev.data.cal.data('colorpicker')
+                                    .fields
+                                    .eq(6)
+                                    .val(parseInt(100*(150 - Math.max(0,Math.min(150,(ev.pageY - ev.data.pos.top))))/150, 10))
+                                    .end()
+                                    .eq(5)
+                                    .val(parseInt(100*(Math.max(0,Math.min(150,(ev.pageX - ev.data.pos.left))))/150, 10))
+                                    .get(0),
+                            [ev.data.preview]
+                    );
+                    return false;
+                },
+                upSelector = function (ev) {
+                    fillRGBFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
+                    fillHexFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
+                    $(document).unbind('mouseup', upSelector);
+                    $(document).unbind('mousemove', moveSelector);
+                    return false;
+                },
+                enterSubmit = function (ev) {
+                    $(this).addClass('colorpicker_focus');
+                },
+                leaveSubmit = function (ev) {
+                    $(this).removeClass('colorpicker_focus');
+                },
+                clickSubmit = function (ev) {
+                    var cal = $(this).parent();
+                    var col = cal.data('colorpicker').color;
+                    cal.data('colorpicker').origColor = col;
+                    setCurrentColor(col, cal.get(0));
+                    cal.data('colorpicker').onSubmit(col, HSBToHex(col), HSBToRGB(col), cal.data('colorpicker').el);
+                },
+                show = function (ev) {
+                    var cal = $('#' + $(this).data('colorpickerId'));
+                    cal.data('colorpicker').onBeforeShow.apply(this, [cal.get(0)]);
+                    var pos = $(this).offset();
+                    var viewPort = getViewport();
+                    var top = pos.top + this.offsetHeight;
+                    var left = pos.left;
+                    if (top + 176 > viewPort.t + viewPort.h) {
+                        top -= this.offsetHeight + 176;
+                    }
+                    if (left + 356 > viewPort.l + viewPort.w) {
+                        left -= 356;
+                    }
+                    cal.css({left: left + 'px', top: top + 'px'});
+                    if (cal.data('colorpicker').onShow.apply(this, [cal.get(0)]) != false) {
+                        cal.show();
+                    }
+                    $(document).bind('mousedown', {cal: cal}, hide);
+                    return false;
+                },
+                hide = function (ev) {
+                    if (!isChildOf(ev.data.cal.get(0), ev.target, ev.data.cal.get(0))) {
+                        if (ev.data.cal.data('colorpicker').onHide.apply(this, [ev.data.cal.get(0)]) != false) {
+                            ev.data.cal.hide();
+                        }
+                        $(document).unbind('mousedown', hide);
+                    }
+                },
+                isChildOf = function(parentEl, el, container) {
+                    if (parentEl == el) {
+                        return true;
+                    }
+                    if (parentEl.contains) {
+                        return parentEl.contains(el);
+                    }
+                    if ( parentEl.compareDocumentPosition ) {
+                        return !!(parentEl.compareDocumentPosition(el) & 16);
+                    }
+                    var prEl = el.parentNode;
+                    while(prEl && prEl != container) {
+                        if (prEl == parentEl)
+                            return true;
+                        prEl = prEl.parentNode;
+                    }
+                    return false;
+                },
+                getViewport = function () {
+                    var m = document.compatMode == 'CSS1Compat';
+                    return {
+                        l : window.pageXOffset || (m ? document.documentElement.scrollLeft : document.body.scrollLeft),
+                        t : window.pageYOffset || (m ? document.documentElement.scrollTop : document.body.scrollTop),
+                        w : window.innerWidth || (m ? document.documentElement.clientWidth : document.body.clientWidth),
+                        h : window.innerHeight || (m ? document.documentElement.clientHeight : document.body.clientHeight)
+                    };
+                },
+                fixHSB = function (hsb) {
+                    return {
+                        h: Math.min(360, Math.max(0, hsb.h)),
+                        s: Math.min(100, Math.max(0, hsb.s)),
+                        b: Math.min(100, Math.max(0, hsb.b))
+                    };
+                },
+                fixRGB = function (rgb) {
+                    return {
+                        r: Math.min(255, Math.max(0, rgb.r)),
+                        g: Math.min(255, Math.max(0, rgb.g)),
+                        b: Math.min(255, Math.max(0, rgb.b))
+                    };
+                },
+                fixHex = function (hex) {
+                    var len = 6 - hex.length;
+                    if (len > 0) {
+                        var o = [];
+                        for (var i=0; i<len; i++) {
+                            o.push('0');
+                        }
+                        o.push(hex);
+                        hex = o.join('');
+                    }
+                    return hex;
+                },
+                HexToRGB = function (hex) {
+                    var hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
+                    return {r: hex >> 16, g: (hex & 0x00FF00) >> 8, b: (hex & 0x0000FF)};
+                },
+                HexToHSB = function (hex) {
+                    return RGBToHSB(HexToRGB(hex));
+                },
+                RGBToHSB = function (rgb) {
+                    var hsb = {
+                        h: 0,
+                        s: 0,
+                        b: 0
+                    };
+                    var min = Math.min(rgb.r, rgb.g, rgb.b);
+                    var max = Math.max(rgb.r, rgb.g, rgb.b);
+                    var delta = max - min;
+                    hsb.b = max;
+                    if (max != 0) {
+
+                    }
+                    hsb.s = max != 0 ? 255 * delta / max : 0;
+                    if (hsb.s != 0) {
+                        if (rgb.r == max) {
+                            hsb.h = (rgb.g - rgb.b) / delta;
+                        } else if (rgb.g == max) {
+                            hsb.h = 2 + (rgb.b - rgb.r) / delta;
+                        } else {
+                            hsb.h = 4 + (rgb.r - rgb.g) / delta;
+                        }
+                    } else {
+                        hsb.h = -1;
+                    }
+                    hsb.h *= 60;
+                    if (hsb.h < 0) {
+                        hsb.h += 360;
+                    }
+                    hsb.s *= 100/255;
+                    hsb.b *= 100/255;
+                    return hsb;
+                },
+                HSBToRGB = function (hsb) {
+                    var rgb = {};
+                    var h = Math.round(hsb.h);
+                    var s = Math.round(hsb.s*255/100);
+                    var v = Math.round(hsb.b*255/100);
+                    if(s == 0) {
+                        rgb.r = rgb.g = rgb.b = v;
+                    } else {
+                        var t1 = v;
+                        var t2 = (255-s)*v/255;
+                        var t3 = (t1-t2)*(h%60)/60;
+                        if(h==360) h = 0;
+                        if(h<60) {rgb.r=t1;	rgb.b=t2; rgb.g=t2+t3}
+                        else if(h<120) {rgb.g=t1; rgb.b=t2;	rgb.r=t1-t3}
+                        else if(h<180) {rgb.g=t1; rgb.r=t2;	rgb.b=t2+t3}
+                        else if(h<240) {rgb.b=t1; rgb.r=t2;	rgb.g=t1-t3}
+                        else if(h<300) {rgb.b=t1; rgb.g=t2;	rgb.r=t2+t3}
+                        else if(h<360) {rgb.r=t1; rgb.g=t2;	rgb.b=t1-t3}
+                        else {rgb.r=0; rgb.g=0;	rgb.b=0}
+                    }
+                    return {r:Math.round(rgb.r), g:Math.round(rgb.g), b:Math.round(rgb.b)};
+                },
+                RGBToHex = function (rgb) {
+                    var hex = [
+                        rgb.r.toString(16),
+                        rgb.g.toString(16),
+                        rgb.b.toString(16)
+                    ];
+                    $.each(hex, function (nr, val) {
+                        if (val.length == 1) {
+                            hex[nr] = '0' + val;
+                        }
+                    });
+                    return hex.join('');
+                },
+                HSBToHex = function (hsb) {
+                    return RGBToHex(HSBToRGB(hsb));
+                },
+                restoreOriginal = function () {
+                    var cal = $(this).parent();
+                    var col = cal.data('colorpicker').origColor;
+                    cal.data('colorpicker').color = col;
+                    fillRGBFields(col, cal.get(0));
+                    fillHexFields(col, cal.get(0));
+                    fillHSBFields(col, cal.get(0));
+                    setSelector(col, cal.get(0));
+                    setHue(col, cal.get(0));
+                    setNewColor(col, cal.get(0));
+                };
+        return {
+            init: function (opt) {
+                opt = $.extend({}, defaults, opt||{});
+                if (typeof opt.color == 'string') {
+                    opt.color = HexToHSB(opt.color);
+                } else if (opt.color.r != undefined && opt.color.g != undefined && opt.color.b != undefined) {
+                    opt.color = RGBToHSB(opt.color);
+                } else if (opt.color.h != undefined && opt.color.s != undefined && opt.color.b != undefined) {
+                    opt.color = fixHSB(opt.color);
+                } else {
+                    return this;
+                }
+                return this.each(function () {
+                    if (!$(this).data('colorpickerId')) {
+                        var options = $.extend({}, opt);
+                        options.origColor = opt.color;
+                        var id = 'collorpicker_' + parseInt(Math.random() * 1000);
+                        $(this).data('colorpickerId', id);
+                        var cal = $(tpl).attr('id', id);
+                        if (options.flat) {
+                            cal.appendTo(this).show();
+                        } else {
+                            cal.appendTo(document.body);
+                        }
+                        options.fields = cal
+                                .find('input')
+                                .bind('keyup', keyDown)
+                                .bind('change', change)
+                                .bind('blur', blur)
+                                .bind('focus', focus);
+                        cal
+                                .find('span').bind('mousedown', downIncrement).end()
+                                .find('>div.colorpicker_current_color').bind('click', restoreOriginal);
+                        options.selector = cal.find('div.colorpicker_color').bind('mousedown', downSelector);
+                        options.selectorIndic = options.selector.find('div div');
+                        options.el = this;
+                        options.hue = cal.find('div.colorpicker_hue div');
+                        cal.find('div.colorpicker_hue').bind('mousedown', downHue);
+                        options.newColor = cal.find('div.colorpicker_new_color');
+                        options.currentColor = cal.find('div.colorpicker_current_color');
+                        cal.data('colorpicker', options);
+                        cal.find('div.colorpicker_submit')
+                                .bind('mouseenter', enterSubmit)
+                                .bind('mouseleave', leaveSubmit)
+                                .bind('click', clickSubmit);
+                        fillRGBFields(options.color, cal.get(0));
+                        fillHSBFields(options.color, cal.get(0));
+                        fillHexFields(options.color, cal.get(0));
+                        setHue(options.color, cal.get(0));
+                        setSelector(options.color, cal.get(0));
+                        setCurrentColor(options.color, cal.get(0));
+                        setNewColor(options.color, cal.get(0));
+                        if (options.flat) {
+                            cal.css({
+                                position: 'relative',
+                                display: 'block'
+                            });
+                        } else {
+                            $(this).bind(options.eventName, show);
+                        }
+                    }
+                });
+            },
+            showPicker: function() {
+                return this.each( function () {
+                    if ($(this).data('colorpickerId')) {
+                        show.apply(this);
+                    }
+                });
+            },
+            hidePicker: function() {
+                return this.each( function () {
+                    if ($(this).data('colorpickerId')) {
+                        $('#' + $(this).data('colorpickerId')).hide();
+                    }
+                });
+            },
+            setColor: function(col) {
+                if (typeof col == 'string') {
+                    col = HexToHSB(col);
+                } else if (col.r != undefined && col.g != undefined && col.b != undefined) {
+                    col = RGBToHSB(col);
+                } else if (col.h != undefined && col.s != undefined && col.b != undefined) {
+                    col = fixHSB(col);
+                } else {
+                    return this;
+                }
+                return this.each(function(){
+                    if ($(this).data('colorpickerId')) {
+                        var cal = $('#' + $(this).data('colorpickerId'));
+                        cal.data('colorpicker').color = col;
+                        cal.data('colorpicker').origColor = col;
+                        fillRGBFields(col, cal.get(0));
+                        fillHSBFields(col, cal.get(0));
+                        fillHexFields(col, cal.get(0));
+                        setHue(col, cal.get(0));
+                        setSelector(col, cal.get(0));
+                        setCurrentColor(col, cal.get(0));
+                        setNewColor(col, cal.get(0));
+                    }
+                });
+            }
+        };
+    }();
+    $.fn.extend({
+        ColorPicker: ColorPicker.init,
+        ColorPickerHide: ColorPicker.hidePicker,
+        ColorPickerShow: ColorPicker.showPicker,
+        ColorPickerSetColor: ColorPicker.setColor
+    });
+})(jQuery)</script>
+<!-- JavaScript custom -->
+<script type="text/javascript">/**
+ * Created by Sönke Greve on 05.01.2015.
+ */
+
+
+/**
+ *
+ * @param id
+ * @param name
+ * @param fontColor
+ * @param bgColor
+ * @constructor
+ */
+function Category(id, name, fontColor, bgColor) {
+    if (id != undefined && id != null) {
+        this.id = id;
+        this.name = name;
+        this.fontColor = fontColor;
+        this.bgColor = bgColor;
+    }
+    console.log('category created');
+}
+
+/** ID getter / setter */
+Category.prototype.getId = function () {
+    return this.id;
+}
+
+Category.prototype.setId = function (id) {
+    this.id = id;
+}
+
+/** name getter / setter */
+Category.prototype.getName = function () {
+    return this.name;
+}
+
+Category.prototype.setName = function (name) {
+    this.name = name;
+}
+
+
+/** fontColor getter / setter */
+Category.prototype.getFontColor = function () {
+    return this.fontColor;
+}
+
+Category.prototype.setFontColor = function (fontColor) {
+    this.fontColor = fontColor;
+}
+
+
+/** bgColor getter / setter */
+Category.prototype.getBgColor = function () {
+    return this.bgColor;
+}
+
+Category.prototype.setBgColor = function (bgColor) {
+    this.bgColor = bgColor;
+}
+
+/**
+ *
+ */
+Category.prototype.getCssClass = function () {
+    var css = "." + this.id + "{\r\ncolor: " + this.fontColor + ";\r\nbackground-color: " + this.bgColor + ";\r\n}";
+    return css;
+}
+
+/**
+ * @param id
+ *  the category identifier (e.g. category0)
+ * @param containerId
+ *  the id of the DOM element this category will be appended to (without starting '#')
+ */
+Category.prototype.appendTo = function (id, containerId, callback) {
+
+    var html = '<div id="' + id + '" class="editCategory">' +
+            '<input id="' + id + 'Name" type="text" value="' + this.getName() + '">' +
+            '<div id="' + id + 'FontColor" class="colorSelector"><div style="background-color:' + this.getFontColor() + '"></div></div>' +
+            '<div id="' + id + 'BgColor" class="colorSelector"><div style="background-color:' + this.getBgColor() + '"></div></div>' +
+            '<button id="' + id + 'Remove" class="colorSelector">Remove category</button>' +
+            '</div>';
+    $('#' + containerId).append(html);
+    $('#' + id + 'Remove').button({
+        icons: {
+            primary: "ui-icon-trash"
+        },
+        text: false
+    }).click(function (event) {
+        callback(id);
+        //deleteCallback();
+        //GLOBAL.categoryDelete.dialog("open");
+    }).addClass("btnRemove");
+}
+
+Category.prototype.loadFromElement = function (elementId) {
+    //var element = $('#' + elementId);
+    //var html = element.html();
+    var index = parseInt(elementId.replace("dlgCat", ""));
+    this.id = "category" + index;
+    this.name = $("#" + elementId + "Name").val();
+    this.fontColor = $("#" + elementId + "FontColor div").css("backgroundColor");
+    this.bgColor = $("#" + elementId + "BgColor div").css("backgroundColor");
+}
+
+
+
+
+</script>
+<script type="text/javascript">/**
+ * Created by Sönke Greve on 06.01.2015.
+ */
+
+function createContextMenu(categories) {
+    // there can only be one! (or is supposed to be just one in this project)
+    $.contextMenu('destroy');
+    // create a container for the category css classes
+    createCSSinDom(categories);
+    registerCustomTypes(categories);
+
+    // create the menu options
+    var menuOptions = {
+        selector: '.event',
+        callback: function (selectedItem, options) {
+            onItemClick(selectedItem, options);
+        },
+        items: createItems(categories)
+    };
+    GLOBAL.contextMenu = $.contextMenu(menuOptions);
+}
+
+function onItemClick(selectedItem, options) {
+    //var selectedEvent = $(this);
+    switch (selectedItem) {
+        case "clear":
+            clearSelection();
+            break;
+        case "remove":
+            removeCssClass();
+            break;
+        case "separator":
+            break;
+        default:
+            assignCssClass(selectedItem);
+            break;
+    }
+}
+
+function createCSSinDom(categories) {
+    if ($("#categoriesStyle").length) { // jquery exists
+        $("#categoriesStyle").remove();
+    }
+
+    $('<style id="categoriesStyle" type="text/css"></style>').appendTo('head');
+    var css = ".cat{ padding: 3px; }\r\n";
+    for (var i = 0; i < categories.length; i++) {
+        var c = categories[i];
+        css += c.getCssClass();
+    }
+    $("#categoriesStyle").html(css);
+}
+
+function createItems(categories) {
+    var items = {};
+    items["clear"] = {name: "Clear selection"};
+    items["remove"] = {name: "Remove assigned category"};
+    items["separator"] = "-";
+    for (var i = 0; i < categories.length; i++) {
+        var c = categories[i];
+        items[c.getId()] = {type: c.getId(), customName: c.getName()};
+    }
+    return items;
+}
+
+function registerCustomTypes(categories) {
+    for (var i = 0; i < categories.length; i++) {
+        var c = categories[i];
+        $.contextMenu.types[c.getId()] = {};
+        $.contextMenu.types[c.getId()] = function (item, opt, root) {
+            var type = '<div class="cat ' + item.type + '">' + item.customName + '</div>';
+            this.append(type);
+        };
+    }
+}
+
+function removeCssClass() {
+    var selected = $(".ui-selected");
+    for (var i = 0; i < GLOBAL.categories.length; i++) {
+        selected.removeClass("category" + i);
+    }
+    selected.removeClass("ui-selected");
+}
+
+function assignCssClass(className) {
+    var selected = $(".ui-selected");
+    for (var i = 0; i < GLOBAL.categories.length; i++) {
+        selected.removeClass("category" + i);
+    }
+    selected.addClass(className);
+    selected.removeClass("ui-selected");
+}</script>
+<script type="text/javascript">var GLOBAL = {};
+
+//$(window).resize(function () {
+//    $("#scrollWrapper").css("height", $(window).height() + "px");
+//    $("#scrollWrapper").css("width", $(window).width() + "px");
+//});
+
+
+$(document).ready(function () {
+    moment().format();
+    moment.locale('de');
+    var year = moment().year();
+    setup(year);
+    draw(year);
+});
+
+function setup(year) {
+    setupCategories();
+    formatToolBox(year);
+    populateMonthHeader();
+    setupDialogs();
+    createContextMenu(GLOBAL.categories);
+}
+
+function setupDialogs() {
+
+    // categories editor
+    GLOBAL.categoryEditor = $("#dlgCategories").dialog({
+        autoOpen: false,
+        height: 500,
+        width: 420,
+        modal: true,
+        buttons: {
+            "Add Category": addCategory,
+            Cancel: function () {
+                GLOBAL.categoryEditor.dialog("close");
+            },
+            "OK": saveChanges
+        }
+    });
+
+    // delete categories confirmation
+    GLOBAL.categoryDelete = $("#dlgCategoryDelete").dialog({
+        autoOpen: false,
+        resizable: false,
+        height: 140,
+        modal: true,
+        buttons: {
+            "Ok": function () {
+                onDeleteOk();
+                $(this).dialog("close");
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+}
+
+function onDeleteOk() {
+    var id = GLOBAL.categoryDelete.data("currentId");
+    $("#" + id).css("display", "none");
+}
+
+function deleteCallback(id) {
+    GLOBAL.categoryDelete.data("currentId", id);
+    GLOBAL.categoryDelete.dialog("open");
+}
+
+function addCategory() {
+    var index = 0;
+    var children = $("#dlgCategories").children('div');
+    if (children.length > 0) {
+        var lastChild = children[children.length - 1];
+        var id = $(lastChild).attr("id");
+        id = id.replace("dlgCat", "");
+        index = parseInt(id);
+        index++;
+    }
+
+    var cat = new Category("category" + index, "My Category " + index, "#FFFFFF", "#000000");
+    var prefix = 'dlgCat';
+    var ownElementId = prefix + index;
+    cat.appendTo(ownElementId, 'dlgCategories', deleteCallback);
+    createCategoryColorPicker(prefix + index, cat);
+}
+
+function saveChanges() {
+    // read categories from dialog
+    var result = new Array();
+    var children = $('#dlgCategories').children();
+    for (var c = 0; c < children.length; c++) {
+
+        var child = $(children[c]);
+        var category = new Category();
+        var id = child.attr("id");
+
+        // remove deleted categories - this is all divs that are hidden from the dialog
+        var isDeleted = child.css("display").localeCompare("none") == 0;
+        if (isDeleted) {
+            removeCategoryCss(id);
+        } else {
+            category.loadFromElement(id);
+            result.push(category);
+        }
+    }
+    GLOBAL.categories = result;
+    createContextMenu(GLOBAL.categories);
+    GLOBAL.categoryEditor.dialog("close");
+}
+
+function removeCategoryCss(categoryId) {
+    var index = parseInt(categoryId.replace("dlgCat", ""));
+    var str = "category" + index;
+    for (var i = 0; i < GLOBAL.categories.length; i++) {
+        $("." + str).removeClass(GLOBAL.categories[i].getId());
+    }
+    $("#" + categoryId).remove();
+}
+
+function setupCategories() {
+    GLOBAL.categories = new Array();
+    GLOBAL.categories.push(new Category("category0", "Jour-Fix", "#FFFFFF", "#006600"));
+    GLOBAL.categories.push(new Category("category1", "Board Meetings", "#FFFFFF", "#AA0000"));
+    GLOBAL.categories.push(new Category("category2", "Interviews", "#FFFFFF", "#0000AA"));
+}
+
+function draw(year) {
+    populateYearTable(year);
+    $(".eventWrapper").bind("mousedown", function (e) {
+        e.metaKey = true;
+    }).selectable();
+}
+
+function formatToolBox(year) {
+    $('#toolBox').shadow('raised').css({'border-radius': '0pt 0pt 10pt 10pt'});
+    $('#prevYear').button({
+        icons: {
+            primary: "ui-icon-triangle-1-w"
+        },
+        text: false
+    }).click(function () {
+        changeYear(-1)
+    });
+
+    $('#yearButton').button().click(function () {
+        changeYear(1)
+    });
+
+    $('#yearSelector').html(year);
+
+    $('#nextYear').button({
+        icons: {
+            primary: "ui-icon-triangle-1-e"
+        },
+        text: false
+    }).click(function () {
+        changeYear(1)
+    });
+
+    $('#editCategories').button({
+        icons: {primary: "ui-icon-pencil"}
+    }).click(onEditCategoriesClick);
+
+    $('#clearSelection').button().click(function () {
+        clearSelection();
+    });
+}
+
+function onEditCategoriesClick() {
+    $("#dlgCategories").html("");
+    var prefix = "dlgCat";
+
+    for (var c = 0; c < GLOBAL.categories.length; c++) {
+        var cat = GLOBAL.categories[c];
+        cat.appendTo(prefix + c, 'dlgCategories', deleteCallback);
+        createCategoryColorPicker(prefix + c, cat);
+    }
+
+    GLOBAL.categoryEditor.dialog("open");
+}
+
+function createCategoryColorPicker(id, cat) {
+// Color picker - font-color
+    var fontColorSelector = '#' + id + "FontColor";
+    $(fontColorSelector).ColorPicker({
+        color: cat.getFontColor(),
+        onShow: function (colpkr) {
+            $(colpkr).fadeIn(500);
+            return false;
+        },
+        onHide: function (colpkr) {
+            //$(this).ColorPickerHide();
+            $(colpkr).fadeOut(500);
+            return false;
+        },
+        onSubmit: function (hsb, hex, rgb, el) {
+            var selector = "#" + $(el).attr('id') + ' div';
+            $(selector).css('backgroundColor', '#' + hex);
+            $(el).ColorPickerHide();
+        },
+        onBeforeShow: function () {
+            $(this).ColorPickerSetColor(cat.getFontColor());
+        }
+        //,
+        //onChange: function (hsb, hex, rgb, el) {
+        //    console.log("el: " + el);
+        //    $(fontColorSelector + ' div').css('backgroundColor', '#' + hex);
+        //}
+    });
+
+    // Color picker - bgColor
+    var bgColorSelector = '#' + id + "BgColor";
+    $(bgColorSelector).ColorPicker({
+        color: cat.getBgColor(),
+        onShow: function (colpkr) {
+            $(colpkr).fadeIn(500);
+            return false;
+        },
+        onHide: function (colpkr) {
+            $(colpkr).fadeOut(500);
+            return false;
+        },
+        onBeforeShow: function () {
+            $(this).ColorPickerSetColor(cat.getBgColor());
+        },
+        onSubmit: function (hsb, hex, rgb, el) {
+            var selector = "#" + $(el).attr('id') + ' div';
+            $(selector).css('backgroundColor', '#' + hex);
+            $(el).ColorPickerHide();
+        }
+        //,
+        //onChange: function (hsb, hex, rgb) {
+        //    $(bgColorSelector + ' div').css('backgroundColor', '#' + hex);
+        //}
+    });
+}
+
+function clearSelection() {
+    $('.ui-selected').removeClass('ui-selected');
+}
+
+function changeYear(byVal) {
+    var yearStr = $('#yearSelector').html();
+    var year = parseInt(yearStr);
+    var mom = moment().year(year).add(byVal, 'years').year();
+    $('#yearSelector').html(mom);
+    draw(mom);
+}
+
+function populateMonthHeader() {
+    var html = '';
+    // create month headers
+    html += '<tr>';
+    for (var m = 0; m < 12; m++) {
+        html += '<th class="ui-dialog-titlebar ui-widget-header ui-corner-all month">' + moment().month(m).format('MMMM') + '</th><td class="spacer"></td>';
+    }
+    html += '</tr>';
+    var yt = $('#monthHeader');
+    yt.html(html);
+    $('.month').shadow();
+}
+
+function populateYearTable(year) {
+    var html = '';
+
+    // create days
+    for (var d = 1; d <= 31; d++) {
+
+        html += '<tr>';
+        for (var m = 0; m < 12; m++) {
+
+            var mom = moment().year(year).month(m).date(d);
+            var isSaturday = mom.day() == 6;
+            var isSunday = mom.day() == 0;
+            var isValid = moment([year, m, d]).isValid();
+
+            html += '<td class="ui-corner-all day ';
+
+            if (isSaturday) {
+                html += 'saturday';
+            }
+
+            if (isSunday) {
+                html += 'sunday';
+            }
+
+            if (!isValid) {
+                html += ' invalid';
+            }
+
+            html += '">';
+
+            if (isValid) {
+                html += getDayInfo(mom, d) + getEventWrapper(mom) + '</td>';
+            }
+
+            // create header
+            if (d == 1 && m != 11) {
+                html += '<td class="spacer" rowspan="31"></td>';
+            }
+        }
+
+        html += '</tr>';
+    }
+
+    var yt = $('#yearTable');
+    yt.html(html);
+}
+
+function getDayInfo(moment, dayOfMonth) {
+    var dayName = moment.format('dd');
+
+    var html = '';
+    html += '<div class="dayInfo">';
+    html += dayName + '&nbsp;' + dayOfMonth + '.';
+    html += '</div>';
+    return html;
+}
+
+function getEventWrapper(moment) {
+    var html = '<ol class="eventWrapper">';
+    html += createRandomEvents(moment);
+    html += '</ol>';
+    return html;
+}
+
+function createRandomEvents() {
+    var html = '';
+    for (var i = 0; i < 6; i++) {
+        var a = Math.random() >= 0.9;
+        if (a) {
+            var id = Date.now();
+            html += createEvent(id, "LA Omni-Channel / Update REWE Lieferservice");
+        }
+    }
+    return html;
+}
+
+function createEvent(id, name) {
+    var html = '<li id="' + id + '" class="event">' + name + '</li>';
+    return html;
+}
+
+</script>
+
+<div id="scrollWrapper">
+
+<div id="topBox" class="calendarFrame">
+    <div id="toolBox" class="ui-dialog-titlebar ui-widget-header ui-corner-bottom">
+        <span class="toolGroup">
+            <button id="prevYear">&nbsp;</button>
+            <button id="yearButton"><span id="yearSelector">2014</span></button>
+            <button id="nextYear">&nbsp;</button>
+        </span>
+        <span class="toolGroup">
+            <button id="editCategories">Edit Categories</button>
+            <button id="clearSelection">Clear Selection</button>
+        </span>
+    </div>
+
+    <!--
+    <form id="yearSelector" onsubmit="return display(0);">
+        <button id="prevYear" class="ui-icon ui-icon-circle-arrow-w" onmousedown="display(-1)">&nbsp;&laquo;&nbsp;</button>
+        <input id="yearInput" class="ui-icon ui-icon-circle-arrow-w" size="4" value="" style="width: 4em" maxlength="4">&nbsp;
+        <button id="nextYear" onmousedown="display(1)">&nbsp;&raquo;&nbsp;</button>
+        <input type=submit value="__MSG_Labs_Go_To_Year__" onmousedown="display(0)">
+        <button onmousedown="displayCurrentYear()">__MSG_Labs_This_Year_Button__</button>
+    </form>-->
+    <table id="monthHeader"></table>
+</div>
+
+<!-- container for the edit-categories-dialog  -->
+<div id="dlgCategories" title="Edit Categories"></div>
+<!-- container for the edit-categories-dialog  -->
+<div id="dlgCategoryDelete" title="Delete category?">
+    <p>Are you sure you want to delete the selected category?</p>
+</div>
+
+<table id="yearTable" class="calendarFrame"></table>
+
+</div>
+</body>
+</html>
+]]>
+    </Content>
+
+</Module>
